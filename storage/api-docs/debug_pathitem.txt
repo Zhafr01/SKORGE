@@ -1,0 +1,30 @@
+Required @OA\PathItem() not found
+CONTEXT:
+Array
+(
+)
+
+TRACE:
+#0 /home/zhafier/Documents/SKORGE/vendor/psr/log/src/LoggerTrait.php(61): OpenApi\Loggers\DefaultLogger->log()
+#1 /home/zhafier/Documents/SKORGE/vendor/zircote/swagger-php/src/Annotations/OpenApi.php(178): Psr\Log\AbstractLogger->warning()
+#2 /home/zhafier/Documents/SKORGE/vendor/zircote/swagger-php/src/Analysis.php(392): OpenApi\Annotations\OpenApi->validate()
+#3 /home/zhafier/Documents/SKORGE/vendor/zircote/swagger-php/src/Generator.php(408): OpenApi\Analysis->validate()
+#4 /home/zhafier/Documents/SKORGE/vendor/darkaonline/l5-swagger/src/Generator.php(177): OpenApi\Generator->generate()
+#5 /home/zhafier/Documents/SKORGE/vendor/darkaonline/l5-swagger/src/Generator.php(118): L5Swagger\Generator->scanFilesForDocumentation()
+#6 /home/zhafier/Documents/SKORGE/vendor/darkaonline/l5-swagger/src/Console/GenerateDocsCommand.php(73): L5Swagger\Generator->generateDocs()
+#7 /home/zhafier/Documents/SKORGE/vendor/darkaonline/l5-swagger/src/Console/GenerateDocsCommand.php(56): L5Swagger\Console\GenerateDocsCommand->generateDocumentation()
+#8 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): L5Swagger\Console\GenerateDocsCommand->handle()
+#9 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\Container\BoundMethod::{closure:Illuminate\Container\BoundMethod::call():35}()
+#10 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate\Container\Util::unwrapIfClosure()
+#11 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\Container\BoundMethod::callBoundMethod()
+#12 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate\Container\BoundMethod::call()
+#13 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Console/Command.php(273): Illuminate\Container\Container->call()
+#14 /home/zhafier/Documents/SKORGE/vendor/symfony/console/Command/Command.php(291): Illuminate\Console\Command->execute()
+#15 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Console/Command.php(242): Symfony\Component\Console\Command\Command->run()
+#16 /home/zhafier/Documents/SKORGE/vendor/symfony/console/Application.php(1107): Illuminate\Console\Command->run()
+#17 /home/zhafier/Documents/SKORGE/vendor/symfony/console/Application.php(356): Symfony\Component\Console\Application->doRunCommand()
+#18 /home/zhafier/Documents/SKORGE/vendor/symfony/console/Application.php(195): Symfony\Component\Console\Application->doRun()
+#19 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\Component\Console\Application->run()
+#20 /home/zhafier/Documents/SKORGE/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\Foundation\Console\Kernel->handle()
+#21 /home/zhafier/Documents/SKORGE/artisan(16): Illuminate\Foundation\Application->handleCommand()
+#22 {main}

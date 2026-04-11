@@ -1,0 +1,345 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SKORGE API Documentation",
+        "description": "L5 Swagger OpenApi description for SKORGE Learning System",
+        "contact": {
+            "email": "admin@skorge.local"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/api/ai/cv-summary": {
+            "post": {
+                "tags": [
+                    "AI Features"
+                ],
+                "summary": "Generate an AI powered CV Summary",
+                "description": "Generates a professional summary based on the provided target role and skills.",
+                "operationId": "generateCvSummary",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role"
+                                ],
+                                "properties": {
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Frontend Developer"
+                                    },
+                                    "skills": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "summary": {
+                                            "type": "string",
+                                            "example": "Highly motivated Frontend Developer..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/api/ai/match-jobs": {
+            "post": {
+                "tags": [
+                    "AI Features"
+                ],
+                "summary": "Match Jobs using AI scoring",
+                "description": "Scores a list of jobs based on the user's interest, enrolled courses, and skills.",
+                "operationId": "matchJobs",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "jobs"
+                                ],
+                                "properties": {
+                                    "interest": {
+                                        "type": "string",
+                                        "example": "logic"
+                                    },
+                                    "courses": {
+                                        "description": "Titles of enrolled or bookmarked courses",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "skills": {
+                                        "description": "Known skills from user profile",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "jobs": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully scored jobs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "jobs": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ai/generate-quiz": {
+            "post": {
+                "tags": [
+                    "AI Features"
+                ],
+                "summary": "Generate AI quiz questions",
+                "description": "Returns 5 curated multiple-choice questions based on a topic (course title or job role).",
+                "operationId": "generateQuiz",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "topic"
+                                ],
+                                "properties": {
+                                    "topic": {
+                                        "type": "string",
+                                        "example": "React Modern Patterns"
+                                    },
+                                    "difficulty": {
+                                        "type": "string",
+                                        "example": "intermediate",
+                                        "enum": [
+                                            "beginner",
+                                            "intermediate",
+                                            "advanced"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generated quiz questions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "topic": {
+                                            "type": "string"
+                                        },
+                                        "difficulty": {
+                                            "type": "string"
+                                        },
+                                        "questions": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "operationId": "registerUser",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "operationId": "loginUser",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
+        "/api/courses": {
+            "get": {
+                "tags": [
+                    "Courses"
+                ],
+                "summary": "Get list of courses",
+                "operationId": "getCourses",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/job-roles": {
+            "get": {
+                "tags": [
+                    "Job Roles"
+                ],
+                "summary": "Get list of job roles",
+                "operationId": "getJobRoles",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/user/heartbeat": {
+            "post": {
+                "tags": [
+                    "Gamification Stats"
+                ],
+                "summary": "Track user active time and daily streak",
+                "operationId": "heartbeat",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/stats/leaderboard": {
+            "get": {
+                "tags": [
+                    "Gamification Stats"
+                ],
+                "summary": "Get global leaderboard",
+                "operationId": "getLeaderboard",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/stats/rewards": {
+            "get": {
+                "tags": [
+                    "Gamification Stats"
+                ],
+                "summary": "Get user XP milestones and SkillPet status",
+                "operationId": "getRewards",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "bearerAuth",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "AI Features",
+            "description": "Endpoints for AI-powered CV generation, Job matching, and Quiz generation"
+        },
+        {
+            "name": "Authentication",
+            "description": "API Endpoints for user auth"
+        },
+        {
+            "name": "Courses",
+            "description": "API Endpoints for Courses"
+        },
+        {
+            "name": "Job Roles",
+            "description": "API Endpoints for Job Roles"
+        },
+        {
+            "name": "Gamification Stats",
+            "description": "API Endpoints for User Gamification, Leaderboards, and Rewards"
+        }
+    ]
+}
