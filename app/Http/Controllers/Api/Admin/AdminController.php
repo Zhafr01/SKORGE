@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\JobRole;
 use App\Models\User;
-use App\Models\VideoProgress;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

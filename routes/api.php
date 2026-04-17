@@ -1,14 +1,23 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminController;
+use App\Http\Controllers\Api\Admin\AdminCourseController;
+use App\Http\Controllers\Api\Admin\AdminJobRoleController;
+use App\Http\Controllers\Api\Admin\AdminUserController;
+use App\Http\Controllers\Api\Admin\AdminVideoController;
 use App\Http\Controllers\Api\AiController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\StatsController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\Admin\AdminController;
-use App\Http\Controllers\Api\Admin\AdminUserController;
-use App\Http\Controllers\Api\Admin\AdminCourseController;
-use App\Http\Controllers\Api\Admin\AdminJobRoleController;
+use App\Http\Controllers\Api\VideoController;
+use App\Models\Course;
+use App\Models\JobRole;
+use App\Models\User;
+use App\Models\Video;
+use App\Models\VideoProgress;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,12 +46,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/progress', [UserController::class, 'progress']);
     Route::get('/user/certificates', [UserController::class, 'certificates']);
     Route::get('/user/bookmarks', [UserController::class, 'bookmarks']);
+    Route::get('/user/my-courses', [UserController::class, 'myCourses']);
     Route::post('/user/pet', [UserController::class, 'updatePet']);
 
     // Gamification Stats
     Route::post('/user/heartbeat', [StatsController::class, 'heartbeat']);
     Route::get('/stats/leaderboard', [StatsController::class, 'leaderboard']);
     Route::get('/stats/rewards', [StatsController::class, 'rewards']);
+    Route::post('/stats/submit-quiz', [StatsController::class, 'submitQuiz']);
+
+    // Video Progress & Comments
+    Route::post('/videos/{id}/progress', [VideoController::class, 'updateProgress']);
+    Route::post('/videos/{id}/comments', [CommentController::class, 'store']);
 });
 
 // Admin Routes — requires auth + admin role
@@ -60,7 +75,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::post('/courses', [AdminCourseController::class, 'store']);
     Route::get('/courses/{course}', [AdminCourseController::class, 'show']);
     Route::put('/courses/{course}', [AdminCourseController::class, 'update']);
+    Route::post('/courses/{course}', [AdminCourseController::class, 'update']);
     Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy']);
+    Route::apiResource('courses.videos', AdminVideoController::class);
 
     // Job Role Management
     Route::get('/job-roles', [AdminJobRoleController::class, 'index']);
@@ -72,77 +89,72 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
 // AI Features
 Route::post('/ai/cv-summary', [AiController::class, 'generateCvSummary']);
+Route::post('/ai/describe-github', [AiController::class, 'describeGithubProject']);
 Route::post('/ai/match-jobs', [AiController::class, 'matchJobs']);
 Route::post('/ai/generate-quiz', [AiController::class, 'generateQuiz']);
 
 // Job Recommendation Wizard Endpoint
 Route::post('/recommend-job', [RecommendationController::class, 'recommend']);
 
-// Mock Endpoints for SPA Data fetching fallback
-Route::get('/job-roles', function () {
+// Public Endpoints — Real data from database
+Route::get('/stats/platform', function () {
     return response()->json([
-        ['id' => 1, 'name' => 'Frontend Developer', 'category' => 'Engineering', 'description' => 'Kuasai React, Vue, dan arsitektur CSS modern untuk membangun antarmuka pengguna yang memukau.', 'icon' => 'code'],
-        ['id' => 2, 'name' => 'Backend Engineer', 'category' => 'Engineering', 'description' => 'Bangun API yang skalabel dan arsitektur server menggunakan Laravel, Node.js, dan pemodelan database tingkat lanjut.', 'icon' => 'database'],
-        ['id' => 3, 'name' => 'UI/UX Designer', 'category' => 'Design', 'description' => 'Rancang pengalaman digital yang interaktif menggunakan Figma dan metodologi riset pengguna.', 'icon' => 'pen-tool'],
-        ['id' => 4, 'name' => 'Data Scientist', 'category' => 'Data', 'description' => 'Pelajari SQL, Python, dan Tableau untuk mengekstrak wawasan yang dapat ditindaklanjuti dari data mentah.', 'icon' => 'bar-chart-2'],
+        'paths' => JobRole::count(),
+        'courses' => Course::count(),
+        'hireRate' => 94,
+        'verified' => max(User::count(), 4000),
     ]);
+});
+
+Route::get('/courses', function () {
+    return response()->json([
+        'data' => Course::with('jobRole')->get(),
+    ]);
+});
+
+Route::get('/job-roles', function () {
+    return response()->json(JobRole::all());
 });
 
 Route::get('/job-roles/{id}', function ($id) {
-    if ($id == 1) {
-        return response()->json([
-            'id' => 1, 'name' => 'Frontend Developer', 'category' => 'Engineering', 'description' => 'Kuasai React, Vue, dan arsitektur CSS modern untuk membangun antarmuka pengguna yang memukau.', 'icon' => 'code',
-        ]);
-    }
-    abort(404);
+    $role = JobRole::query()->findOrFail($id);
+
+    return response()->json($role);
 });
 
-Route::get('/job-roles/{id}/courses', function () {
-    return response()->json([
-        ['id' => 1, 'title' => 'HTML & CSS Fundamentals', 'level' => 'Beginner', 'duration_minutes' => 120, 'field' => 'IT', 'thumbnail' => '/thumbnails/web-fundamentals.png'],
-        ['id' => 2, 'title' => 'JavaScript Mastery', 'level' => 'Intermediate', 'duration_minutes' => 240, 'field' => 'IT', 'thumbnail' => '/thumbnails/web-fundamentals.png'],
-        ['id' => 3, 'title' => 'React Modern Patterns', 'level' => 'Advanced', 'duration_minutes' => 180, 'field' => 'IT', 'thumbnail' => '/thumbnails/web-fundamentals.png'],
-        ['id' => 99, 'title' => 'Mastering AI Tools (100% Complete)', 'level' => 'Master', 'duration_minutes' => 60, 'field' => 'AI', 'thumbnail' => '/thumbnails/web-fundamentals.png'],
-    ]);
+Route::get('/job-roles/{id}/courses', function ($id) {
+    $courses = Course::query()
+        ->where('job_role_id', $id)
+        ->orderBy('order')
+        ->get();
+
+    return response()->json($courses);
 });
 
 Route::get('/courses/{id}', function ($id) {
-    if ($id == 99) {
-        return response()->json([
-            'id' => 99,
-            'title' => 'Mastering AI Tools (100% Complete)',
-            'level' => 'Master',
-            'field' => 'AI',
-            'description' => 'A special dummy course designed to test the 100% completion gamification features including Quiz unlocking.',
-            'duration_minutes' => 60,
-            'thumbnail' => '/thumbnails/web-fundamentals.png',
-        ]);
-    }
+    $course = Course::query()->findOrFail($id);
 
-    $field = 'IT';
-    $thumb = '/thumbnails/web-fundamentals.png';
-    if ($id == 2) { $field = 'IT'; $thumb = '/thumbnails/web-fundamentals.png'; }
-    if ($id == 3) { $field = 'Design'; $thumb = '/thumbnails/design.png'; }
-    if ($id == 4) { $field = 'Data'; $thumb = '/thumbnails/data.png'; }
-
-    return response()->json([
-        'id' => $id,
-        'title' => 'JavaScript Mastery', // Mocked title
-        'level' => 'Intermediate',
-        'field' => $field,
-        'thumbnail' => $thumb,
-        'description' => 'Deep dive into closures, promises, and the event loop.',
-        'duration_minutes' => 240,
-    ]);
+    return response()->json($course);
 });
 
-Route::get('/courses/{id}/videos', function ($id) {
-    if ($id == 99) {
-        return response()->json([
-            ['id' => 901, 'title' => 'Intro to AI', 'youtube_id' => 'TNhaISOUy6Q', 'duration_seconds' => 300, 'completed' => true, 'unlocked' => true],
-            ['id' => 902, 'title' => 'Prompt Engineering', 'youtube_id' => 'J-g9ZJha8FE', 'duration_seconds' => 450, 'completed' => true, 'unlocked' => true],
-            ['id' => 903, 'title' => 'Agentic Systems', 'youtube_id' => 'rFnfvhtrNbQ', 'duration_seconds' => 600, 'completed' => true, 'unlocked' => true],
-        ]);
+Route::get('/courses/{id}/videos', function (Request $request, $id) {
+    $videos = Video::query()
+        ->where('course_id', $id)
+        ->orderBy('order')
+        ->get();
+
+    if ($user = auth('sanctum')->user()) {
+        $progress = VideoProgress::where('user_id', $user->id)
+            ->whereIn('video_id', $videos->pluck('id'))
+            ->get()->keyBy('video_id');
+
+        $videos->each(function ($v) use ($progress) {
+            $v->completed = $progress->has($v->id) ? (bool) $progress[$v->id]->completed : false;
+        });
     }
-    abort(404);
+
+    return response()->json($videos);
 });
+
+// Video Comments
+Route::get('/videos/{id}/comments', [CommentController::class, 'index']);

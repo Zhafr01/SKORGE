@@ -1,34 +1,30 @@
+import { BookOpen, ArrowRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AppLayout from '@/components/skorge/AppLayout';
 import { CourseCard } from '@/components/skorge/CourseCard';
-import { BookOpen, ArrowRight, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import { useTranslation } from '@/lib/i18n';
 
 export default function MyCoursesIndex() {
     const { t } = useTranslation();
-    const [enrolledIds, setEnrolledIds] = useState<number[]>([]);
-    const [allCourses, setAllCourses] = useState<any[]>([]);
+    const { isAuthenticated } = useAuth();
+    const [courses, setCourses] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const saved: number[] = JSON.parse(localStorage.getItem('skorge_my_courses') || '[]');
-        setEnrolledIds(saved);
-        
-        api.get('/courses')
-            .then(res => setAllCourses(res.data.data || res.data))
+        if (!isAuthenticated) {
+            setIsLoading(false);
+
+            return;
+        }
+
+        api.get('/user/my-courses')
+            .then(res => setCourses(res.data.data || res.data))
             .catch(() => {})
             .finally(() => setIsLoading(false));
-    }, []);
-
-    const handleRemove = (courseId: number) => {
-        const updated = enrolledIds.filter((id) => id !== courseId);
-        localStorage.setItem('skorge_my_courses', JSON.stringify(updated));
-        setEnrolledIds(updated);
-    };
-
-    const items = allCourses.filter(course => enrolledIds.includes(course.id));
+    }, [isAuthenticated]);
 
     return (
         <AppLayout
@@ -36,20 +32,17 @@ export default function MyCoursesIndex() {
             description={t('myCourses.subtitle')}
         >
             {isLoading ? (
-                <div className="flex justify-center p-10"><div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div></div>
-            ) : items.length > 0 ? (
+                <div className="flex justify-center p-10"><div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div></div>
+            ) : courses.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {items.map((course: any) => (
-                        <div key={course.id} className="relative group">
-                            <CourseCard course={course} href={`/courses/${course.id}`} />
-                            <button
-                                onClick={() => handleRemove(course.id)}
-                                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white flex items-center justify-center border border-rose-500/20 hover:border-rose-500 transition-all opacity-0 group-hover:opacity-100 text-sm font-bold z-10 shadow-sm"
-                                title={t('myCourses.unenroll')}
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
+                    {courses.map((course: any) => (
+                        <CourseCard
+                            key={course.id}
+                            course={course}
+                            href={`/courses/${course.id}`}
+                            progress={course.progress}
+                            status={course.status}
+                        />
                     ))}
                 </div>
             ) : (
@@ -63,7 +56,7 @@ export default function MyCoursesIndex() {
                     </p>
                     <Link
                         to="/courses"
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-transform hover:scale-105 shadow-lg shadow-sky-500/20"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-transform hover:scale-105 shadow-lg shadow-cyan-500/20"
                     >
                         {t('myCourses.browse')} <ArrowRight className="w-4 h-4" />
                     </Link>

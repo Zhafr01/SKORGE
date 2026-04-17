@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Sparkles, ArrowRight, BrainCircuit, Layout, Database, Activity,
     Code, PenTool, BarChart2, BookOpen, Zap, Target,
 } from 'lucide-react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AppLayout from '@/components/skorge/AppLayout';
 import LoadingOverlay from '@/components/skorge/LoadingOverlay';
@@ -117,11 +117,11 @@ export default function RecommendationWizard() {
 
     const renderIcon = (name: string) => {
         switch (name) {
-            case 'code': return <Code className="w-12 h-12 text-sky-400" />;
-            case 'database': return <Database className="w-12 h-12 text-sky-400" />;
-            case 'pen-tool': return <PenTool className="w-12 h-12 text-sky-400" />;
-            case 'bar-chart-2': return <BarChart2 className="w-12 h-12 text-sky-400" />;
-            default: return <BrainCircuit className="w-12 h-12 text-sky-400" />;
+            case 'code': return <Code className="w-12 h-12 text-cyan-400" />;
+            case 'database': return <Database className="w-12 h-12 text-cyan-400" />;
+            case 'pen-tool': return <PenTool className="w-12 h-12 text-cyan-400" />;
+            case 'bar-chart-2': return <BarChart2 className="w-12 h-12 text-cyan-400" />;
+            default: return <BrainCircuit className="w-12 h-12 text-cyan-400" />;
         }
     };
 
@@ -132,7 +132,7 @@ export default function RecommendationWizard() {
     return (
         <AppLayout>
             <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-3xl w-full relative z-10">
@@ -147,8 +147,8 @@ export default function RecommendationWizard() {
                                 exit={{ opacity: 0, y: -20 }}
                                 className="text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 md:p-16 shadow-2xl"
                             >
-                                <div className="mx-auto w-20 h-20 bg-sky-50 dark:bg-sky-500/20 rounded-2xl flex items-center justify-center mb-8">
-                                    <Sparkles className="w-10 h-10 text-sky-500 dark:text-sky-400" />
+                                <div className="mx-auto w-20 h-20 bg-cyan-50 dark:bg-cyan-500/20 rounded-2xl flex items-center justify-center mb-8">
+                                    <Sparkles className="w-10 h-10 text-cyan-500 dark:text-cyan-400" />
                                 </div>
                                 <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6">
                                     Discover Your True Path
@@ -164,8 +164,10 @@ export default function RecommendationWizard() {
                                     ))}
                                 </div>
                                 <button
-                                    onClick={(e) => { e.preventDefault(); setStep(1); }}
-                                    className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-orange-500 dark:from-sky-500 dark:to-orange-500 hover:from-sky-500 hover:to-orange-400 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-lg shadow-sky-500/25 transition-all hover:scale-105"
+                                    onClick={(e) => {
+ e.preventDefault(); setStep(1); 
+}}
+                                    className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-orange-500 dark:from-cyan-500 dark:to-orange-500 hover:from-cyan-500 hover:to-orange-400 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-lg shadow-cyan-500/25 transition-all hover:scale-105"
                                 >
                                     Start The Quiz <ArrowRight className="w-5 h-5" />
                                 </button>
@@ -182,13 +184,13 @@ export default function RecommendationWizard() {
                                 className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl"
                             >
                                 <div className="mb-8">
-                                    <div className="flex justify-between text-sm font-semibold text-sky-600 dark:text-sky-400 mb-4">
+                                    <div className="flex justify-between text-sm font-semibold text-cyan-600 dark:text-cyan-400 mb-4">
                                         <span>Question {step} of {questions.length}</span>
                                         <span>{Math.round((step / questions.length) * 100)}%</span>
                                     </div>
                                     <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-200 dark:border-transparent">
                                         <motion.div
-                                            className="bg-gradient-to-r from-sky-500 to-orange-500 h-full"
+                                            className="bg-gradient-to-r from-cyan-500 to-orange-500 h-full"
                                             initial={{ width: `${((step - 1) / questions.length) * 100}%` }}
                                             animate={{ width: `${(step / questions.length) * 100}%` }}
                                             transition={{ duration: 0.5 }}
@@ -205,15 +207,17 @@ export default function RecommendationWizard() {
                                         <button
                                             key={idx}
                                             type="button"
-                                            onClick={(e) => { e.preventDefault(); handleAnswer(option.value); }}
-                                            className="w-full text-left p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-sky-400 dark:hover:border-sky-500/50 transition-all group shadow-sm hover:shadow-md"
+                                            onClick={(e) => {
+ e.preventDefault(); handleAnswer(option.value); 
+}}
+                                            className="w-full text-left p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-cyan-400 dark:hover:border-cyan-500/50 transition-all group shadow-sm hover:shadow-md"
                                         >
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-700 dark:text-slate-300 font-medium group-hover:text-slate-900 dark:group-hover:text-white text-lg">
                                                     {option.label}
                                                 </span>
-                                                <div className="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 group-hover:border-sky-500 dark:group-hover:border-sky-400 group-hover:bg-sky-50 dark:group-hover:bg-sky-500/20 flex items-center justify-center transition-colors">
-                                                    <div className="w-2 h-2 rounded-full bg-sky-500 dark:bg-sky-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                <div className="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 group-hover:border-cyan-500 dark:group-hover:border-cyan-400 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-500/20 flex items-center justify-center transition-colors">
+                                                    <div className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 </div>
                                             </div>
                                         </button>
@@ -239,14 +243,14 @@ export default function RecommendationWizard() {
                                 transition={{ type: 'spring', bounce: 0.4 }}
                                 className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl"
                             >
-                                <div className="bg-gradient-to-br from-sky-50 dark:from-sky-500/20 via-white dark:via-slate-900 to-orange-50 dark:to-orange-500/10 p-10 text-center relative border-b border-slate-100 dark:border-transparent">
-                                    <div className="absolute top-4 right-4 bg-white/80 dark:bg-slate-950/50 backdrop-blur px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 text-sky-600 dark:text-sky-400 font-bold text-sm">
+                                <div className="bg-gradient-to-br from-cyan-50 dark:from-cyan-500/20 via-white dark:via-slate-900 to-orange-50 dark:to-orange-500/10 p-10 text-center relative border-b border-slate-100 dark:border-transparent">
+                                    <div className="absolute top-4 right-4 bg-white/80 dark:bg-slate-950/50 backdrop-blur px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 text-cyan-600 dark:text-cyan-400 font-bold text-sm">
                                         {result.match_percentage}% Match
                                     </div>
                                     <div className="mx-auto w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-xl border border-slate-200 dark:border-slate-700">
                                         {renderIcon(result.recommended_role.icon)}
                                     </div>
-                                    <h4 className="text-sky-600 dark:text-sky-400 font-semibold tracking-widest uppercase mb-2">Your Perfect Fit</h4>
+                                    <h4 className="text-cyan-600 dark:text-cyan-400 font-semibold tracking-widest uppercase mb-2">Your Perfect Fit</h4>
                                     <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">
                                         {result.recommended_role.name}
                                     </h1>
@@ -255,10 +259,10 @@ export default function RecommendationWizard() {
                                     </p>
                                     
                                     {result.explanation && (
-                                        <div className="max-w-2xl mx-auto mb-6 p-5 rounded-2xl bg-sky-50 dark:bg-sky-500/10 border border-sky-100 dark:border-sky-500/20 text-left">
+                                        <div className="max-w-2xl mx-auto mb-6 p-5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-100 dark:border-cyan-500/20 text-left">
                                             <div className="flex items-center gap-2 mb-2">
-                                                <BrainCircuit className="w-5 h-5 text-sky-600 dark:text-sky-400" />
-                                                <h4 className="font-bold text-sky-700 dark:text-sky-300">Why this role?</h4>
+                                                <BrainCircuit className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                                                <h4 className="font-bold text-cyan-700 dark:text-cyan-300">Why this role?</h4>
                                             </div>
                                             <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
                                                 {result.explanation}
@@ -270,7 +274,7 @@ export default function RecommendationWizard() {
                                     {skillTags.length > 0 && (
                                         <div className="flex flex-wrap justify-center gap-2 mb-2">
                                             {skillTags.map(tag => (
-                                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-sky-100 dark:bg-sky-500/15 border border-sky-200 dark:border-sky-500/25 text-sky-700 dark:text-sky-300">
+                                                <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-cyan-100 dark:bg-cyan-500/15 border border-cyan-200 dark:border-cyan-500/25 text-cyan-700 dark:text-cyan-300">
                                                     <Zap className="w-3 h-3" /> {tag}
                                                 </span>
                                             ))}
@@ -299,7 +303,7 @@ export default function RecommendationWizard() {
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                         <Link
                                             to={`/job-roles/${result.recommended_role.id}`}
-                                            className="px-8 py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-105 text-center border border-sky-500"
+                                            className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-105 text-center border border-cyan-500"
                                         >
                                             Explore This Role
                                         </Link>

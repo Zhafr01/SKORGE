@@ -5,8 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SKORGE - Career-Oriented Learning System</title>
     <link rel="icon" type="image/png" href="/icon.png" />
+    <style>
+        /* HIDE GOOGLE TRANSLATE BANNER FULLY */
+        body { top: 0px !important; position: static !important; }
+        html { height: auto !important; }
+        .skiptranslate iframe { display: none !important; visibility: hidden !important; opacity: 0 !important; }
+        #goog-gt-tt { display: none !important; visibility: hidden !important; opacity: 0 !important; }
+        .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+        /* Hide the container */
+        #google_translate_host { display: none !important; }
+    </style>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        if (window.google && window.google.translate) {
+            new window.google.translate.TranslateElement({
+              pageLanguage: 'en', 
+              includedLanguages: 'id,en', 
+              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+              autoDisplay: false
+            }, 'google_translate_host');
+        }
+      }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </head>
   <body class="bg-slate-950 font-sans text-slate-200">
+    <div id="google_translate_host"></div>
     <div id="root"></div>
     <script type="module" src="/resources/js/main.tsx"></script>
   </body>

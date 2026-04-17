@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
-import AppLayout from '@/components/skorge/AppLayout';
 import { Target, Users, Zap, CheckCircle2, ChevronRight, Linkedin, Mail, Lock } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import AppLayout from '@/components/skorge/AppLayout';
 import { useTranslation } from '@/lib/i18n';
 
 function useCountUp(target: number, duration = 1800) {
@@ -14,11 +14,13 @@ function useCountUp(target: number, duration = 1800) {
         const timer = setInterval(() => {
             current += 1;
             setValue(Math.round((current / steps) * target));
+
             if (current >= steps) {
                 clearInterval(timer);
                 setValue(target);
             }
         }, stepDuration);
+
         return () => clearInterval(timer);
     }, [target, duration]);
 
@@ -26,17 +28,6 @@ function useCountUp(target: number, duration = 1800) {
 }
 
 const TEAM = [
-    {
-        name: 'Muhammad Zhafier Ardine Yudhistira',
-        role: 'CTO & Head of AI',
-        bio: 'Architecting the AI-driven recommendation pathways and automated skill assessments powering the platform.',
-        avatar: '/Zhafier.png',
-        avatarSize: 'h-48 w-auto',
-        accentColor: 'text-sky-400',
-        hoverGradient: 'from-sky-900/60',
-        linkedin: 'https://linkedin.com',
-        email: 'zhafier@skorge.dev',
-    },
     {
         name: 'Paul Fajar Sabatino',
         role: 'Founder & CEO',
@@ -47,6 +38,17 @@ const TEAM = [
         hoverGradient: 'from-emerald-900/60',
         linkedin: 'https://linkedin.com',
         email: 'paul@skorge.dev',
+    },
+    {
+        name: 'Muhammad Zhafier Ardine Yudhistira',
+        role: 'CTO & Head of AI',
+        bio: 'Architecting the AI-driven recommendation pathways and automated skill assessments powering the platform.',
+        avatar: '/Zhafier.png',
+        avatarSize: 'h-48 w-auto',
+        accentColor: 'text-cyan-400',
+        hoverGradient: 'from-cyan-900/60',
+        linkedin: 'https://linkedin.com',
+        email: 'zhafier@skorge.dev',
     },
     {
         name: 'Zacky Candra Firmansyah',
@@ -69,7 +71,7 @@ export default function About() {
     const successRate = useCountUp(92);
 
     const stats = [
-        { label: t('about.stat.learners'), value: `${(learnersCount / 1000).toFixed(0)}K+`, color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-500/10' },
+        { label: t('about.stat.learners'), value: `${(learnersCount / 1000).toFixed(0)}K+`, color: 'text-cyan-600 dark:text-cyan-400', bg: 'bg-cyan-500/10' },
         { label: t('about.stat.roles'), value: `${rolesCount}+`, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
         { label: t('about.stat.partners'), value: `${partnersCount}+`, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500/10' },
         { label: t('about.stat.success'), value: `${successRate}%`, color: 'text-rose-600 dark:text-rose-400', bg: 'bg-rose-500/10' },
@@ -84,11 +86,11 @@ export default function About() {
                 {/* Mission Section */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm font-bold uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-bold uppercase tracking-wider">
                             <Target className="w-4 h-4" /> {t('about.mission')}
                         </div>
                         <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
-                            {t('about.missionText1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-orange-400">{t('about.missionText2')}</span> {t('about.missionText3')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">{t('about.missionText4')}</span>.
+                            {t('about.missionText1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-orange-400">{t('about.missionText2')}</span> {t('about.missionText3')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">{t('about.missionText4')}</span>.
                         </h2>
                         <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                             {t('about.missionDesc')}
@@ -103,9 +105,9 @@ export default function About() {
                         </div>
                     </div>
                     <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/20 to-orange-500/20 rounded-3xl blur-3xl" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-orange-500/20 rounded-3xl blur-3xl" />
                         <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-xl dark:shadow-2xl overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="grid grid-cols-2 gap-4">
                                 {stats.map((stat, i) => (
                                     <div key={i} className={`p-6 rounded-2xl border border-slate-200 dark:border-slate-800 ${stat.bg} backdrop-blur-sm hover:-translate-y-1 transition-all duration-300`}>
@@ -136,18 +138,24 @@ export default function About() {
                 </section>
 
                 {/* CTA Section */}
-                <section className="relative overflow-hidden bg-gradient-to-br from-sky-900 to-orange-900 rounded-3xl p-10 lg:p-16 text-center border border-sky-500/30 shadow-2xl group cursor-pointer hover:border-sky-400/50 transition-colors duration-500">
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-sky-900 via-transparent to-orange-900 opacity-50 group-hover:scale-105 transition-transform duration-1000"></div>
+                <section className="relative overflow-hidden bg-white dark:bg-slate-950 rounded-3xl p-10 lg:p-16 text-center border border-slate-200 dark:border-slate-800 shadow-xl dark:shadow-2xl group cursor-pointer hover:border-cyan-400/50 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(14,165,233,0.15)] dark:hover:shadow-[0_20px_60px_-15px_rgba(14,165,233,0.2)]">
+                    {/* Glowing Gradient Background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-orange-50 dark:from-cyan-900/40 dark:via-slate-900/80 dark:to-orange-900/40 opacity-80 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    
+                    {/* Ambient Light Orbs */}
+                    <div className="absolute top-0 -left-1/4 w-full h-full bg-cyan-300/30 dark:bg-cyan-500/20 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+                    <div className="absolute bottom-0 -right-1/4 w-full h-full bg-orange-300/20 dark:bg-orange-500/20 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] dark:opacity-[0.15] mix-blend-overlay pointer-events-none"></div>
 
                     <div className="relative z-10">
-                        <h2 className="text-3xl lg:text-4xl font-black text-white mb-6">Ready to change your trajectory?</h2>
-                        <p className="text-lg text-sky-200 mb-8 max-w-2xl mx-auto">
+                        <h2 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-6">Ready to change your trajectory?</h2>
+                        <p className="text-lg text-slate-600 dark:text-cyan-200 mb-8 max-w-2xl mx-auto">
                             Join thousands of learners who have transformed their careers using our structured, job-oriented paths.
                         </p>
                         <Link
                             to="/register"
-                            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-900 font-bold rounded-xl transition-all duration-300 hover:scale-110 hover:bg-sky-50 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.8)] focus:ring-4 focus:ring-sky-300"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white dark:bg-white dark:text-cyan-900 font-bold rounded-xl transition-all duration-300 hover:scale-110 hover:bg-slate-800 dark:hover:bg-cyan-50 hover:shadow-[0_0_40px_-10px_rgba(15,23,42,0.5)] dark:hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.8)] focus:ring-4 focus:ring-cyan-300/50 dark:focus:ring-cyan-300"
                         >
                             Start Your Journey Free <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -186,7 +194,7 @@ function TeamMemberCard({ member }: { member: any }) {
 
                 {/* The Detailed Text Block (Fades in on hover) */}
                 <div className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 rounded-b-3xl p-6 pointer-events-auto shadow-[0_-20px_40px_rgba(15,23,42,0.1)] dark:shadow-[0_-20px_40px_rgba(15,23,42,1)] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <h3 className="text-xl font-bold mb-1 text-slate-800 dark:text-sky-400 group-hover:text-sky-500 transition-colors">{member.name}</h3>
+                    <h3 className="text-xl font-bold mb-1 text-slate-800 dark:text-cyan-400 group-hover:text-cyan-500 transition-colors">{member.name}</h3>
                     <p className={`${member.accentColor} font-semibold text-xs mb-3 uppercase tracking-wider`}>{member.role}</p>
                     <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">{member.bio}</p>
 
@@ -196,7 +204,7 @@ function TeamMemberCard({ member }: { member: any }) {
                             href={member.linkedin}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-semibold text-sm transition-all border border-sky-500/20 hover:border-sky-500/40"
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 font-semibold text-sm transition-all border border-cyan-500/20 hover:border-cyan-500/40"
                         >
                             <Linkedin className="w-4 h-4" /> LinkedIn
                         </a>

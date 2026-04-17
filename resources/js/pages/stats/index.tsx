@@ -1,10 +1,10 @@
+import { Award, Zap, TrendingUp, Target, Crown, ChevronRight, CheckCircle2, Flame, Hourglass, Lock } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import AppLayout from '@/components/skorge/AppLayout';
-import { useAuth } from '@/lib/auth';
-import api from '@/lib/api';
-import { Award, Zap, TrendingUp, Target, Crown, ChevronRight, CheckCircle2, Flame, Hourglass, Lock } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
 import SkillPet from '@/components/skorge/SkillPet';
+import api from '@/lib/api';
+import { useAuth } from '@/lib/auth';
+import { useTranslation } from '@/lib/i18n';
 
 export default function StatsIndex() {
     const { t } = useTranslation();
@@ -86,8 +86,8 @@ export default function StatsIndex() {
                 {/* Top Section: Progress Ring & Pet */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Ring & Level */}
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden group hover:border-sky-300 dark:hover:border-sky-500/30 transition-colors shadow-sm">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-50 dark:bg-sky-500/5 rounded-full blur-3xl group-hover:bg-sky-100 dark:group-hover:bg-sky-500/10 transition-colors" />
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden group hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors shadow-sm">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-50 dark:bg-cyan-500/5 rounded-full blur-3xl group-hover:bg-cyan-100 dark:group-hover:bg-cyan-500/10 transition-colors" />
                         
                         <div className="relative w-48 h-48 flex items-center justify-center mb-6">
                             {/* SVG Ring Background */}
@@ -96,7 +96,7 @@ export default function StatsIndex() {
                                 <circle 
                                     cx="96" cy="96" r="88" 
                                     strokeWidth="12" stroke="currentColor" fill="transparent" 
-                                    className="text-sky-500 transition-all duration-1000 ease-out" 
+                                    className="text-cyan-500 transition-all duration-1000 ease-out" 
                                     strokeDasharray={552.92} /* 2 * PI * r */
                                     strokeDashoffset={552.92 - (552.92 * xpProgress) / 100}
                                     strokeLinecap="round"
@@ -104,7 +104,7 @@ export default function StatsIndex() {
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className="text-5xl font-black text-slate-900 dark:text-white">{level}</span>
-                                <span className="text-sm font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest mt-1">{t('stats.level')}</span>
+                                <span className="text-sm font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest mt-1">{t('stats.level')}</span>
                             </div>
                         </div>
 
@@ -140,7 +140,7 @@ export default function StatsIndex() {
                             ) : (
                                 <div className="space-y-1">
                                     {leaderboard.map((u, index) => (
-                                        <div key={u.id} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${user?.id === u.id ? 'bg-sky-50 dark:bg-sky-900/40 border border-sky-200 dark:border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.05)] dark:shadow-[0_0_20px_rgba(14,165,233,0.1)]' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}>
+                                        <div key={u.id} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${user?.id === u.id ? 'bg-cyan-50 dark:bg-cyan-900/40 border border-cyan-200 dark:border-cyan-500/30 shadow-[0_0_20px_rgba(14,165,233,0.05)] dark:shadow-[0_0_20px_rgba(14,165,233,0.1)]' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}>
                                             <div className="flex items-center gap-4">
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm
                                                     ${index === 0 ? 'bg-amber-400 text-amber-950 shadow-[0_0_15px_rgba(251,191,36,0.3)] dark:shadow-[0_0_15px_rgba(251,191,36,0.5)]' : 
@@ -149,11 +149,11 @@ export default function StatsIndex() {
                                                     #{index + 1}
                                                 </div>
                                                 <div>
-                                                    <div className="text-slate-900 dark:text-white font-bold">{u.name} {user?.id === u.id && <span className="text-sky-600 dark:text-sky-400 ml-1">{t('stats.you')}</span>}</div>
+                                                    <div className="text-slate-900 dark:text-white font-bold">{u.name} {user?.id === u.id && <span className="text-cyan-600 dark:text-cyan-400 ml-1">{t('stats.you')}</span>}</div>
                                                     <div className="text-xs text-slate-500 uppercase font-semibold">{t('stats.level')} {u.level}</div>
                                                 </div>
                                             </div>
-                                            <div className="text-sky-600 dark:text-sky-400 font-black tracking-wider bg-sky-100 dark:bg-sky-500/10 px-3 py-1 rounded-full">{u.xp_points} XP</div>
+                                            <div className="text-cyan-600 dark:text-cyan-400 font-black tracking-wider bg-cyan-100 dark:bg-cyan-500/10 px-3 py-1 rounded-full">{u.xp_points} XP</div>
                                         </div>
                                     ))}
                                 </div>

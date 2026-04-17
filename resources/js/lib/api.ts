@@ -12,10 +12,26 @@ const api = axios.create({
 // Add interceptor to attach bearer token if needed
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('auth_token');
+
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
 });
+
+// Add interceptor to handle 401 responses globally
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            // Allow components to handle their own UX or fallback to login
+        }
+
+        return Promise.reject(error);
+    }
+);
 
 export default api;

@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import AppLayout from '@/components/skorge/AppLayout';
+import { motion } from 'framer-motion';
 import { Search, Trash2, Edit2, ShieldCheck, ShieldOff, X, Check, ChevronLeft, ChevronRight, User, ArrowLeft } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
+import AppLayout from '@/components/skorge/AppLayout';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { Link } from 'react-router-dom';
 
 interface UserRow {
     id: number;
@@ -64,6 +66,7 @@ export default function AdminUsers() {
 
     useEffect(() => {
         const t = setTimeout(fetchUsers, 300);
+
         return () => clearTimeout(t);
     }, [fetchUsers]);
 
@@ -72,8 +75,12 @@ export default function AdminUsers() {
     };
 
     const saveEdit = async () => {
-        if (!editModal.user) return;
+        if (!editModal.user) {
+return;
+}
+
         setSaving(true);
+
         try {
             const res = await api.put(`/admin/users/${editModal.user.id}`, {
                 name: editModal.name,
@@ -103,9 +110,15 @@ export default function AdminUsers() {
 
     return (
         <AppLayout title="User Management" description="View, edit roles and manage all platform users">
+            {/* Background Orbs */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
+                <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-[120px]" />
+                <div className="absolute top-[40%] -left-[10%] w-[40%] h-[60%] rounded-full bg-orange-500/10 dark:bg-orange-500/5 blur-[120px]" />
+            </div>
+
             {/* Back to Admin Panel */}
             <div className="mb-6">
-                <Link to="/admin" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400 transition-colors">
+                <Link to="/admin" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm text-sm font-bold text-slate-600 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 transition-all hover:scale-105 shadow-sm">
                     <ArrowLeft className="w-4 h-4" />
                     Back to Admin Panel
                 </Link>
@@ -113,14 +126,14 @@ export default function AdminUsers() {
             
             {/* Toast */}
             {toast && (
-                <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-xl shadow-2xl font-semibold text-sm flex items-center gap-2 transition-all ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}`}>
-                    {toast.type === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl shadow-black/20 font-semibold text-sm flex items-center gap-3 transition-all ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}`}>
+                    {toast.type === 'success' ? <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center"><Check className="w-3 h-3" /></div> : <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center"><X className="w-3 h-3" /></div>}
                     {toast.msg}
                 </div>
             )}
 
             {/* Edit Modal */}
-            {editModal.user && (
+            {editModal.user && createPortal(
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700 p-6">
                         <div className="flex items-center justify-between mb-6">
@@ -133,7 +146,7 @@ export default function AdminUsers() {
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Name</label>
                                 <input
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                                     value={editModal.name}
                                     onChange={(e) => setEditModal((p) => ({ ...p, name: e.target.value }))}
                                 />
@@ -142,7 +155,7 @@ export default function AdminUsers() {
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Email</label>
                                 <input
                                     type="email"
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                                     value={editModal.email}
                                     onChange={(e) => setEditModal((p) => ({ ...p, email: e.target.value }))}
                                 />
@@ -150,7 +163,7 @@ export default function AdminUsers() {
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Role</label>
                                 <select
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                                     value={editModal.role}
                                     onChange={(e) => setEditModal((p) => ({ ...p, role: e.target.value as 'user' | 'admin' }))}
                                 >
@@ -163,7 +176,7 @@ export default function AdminUsers() {
                             <button
                                 onClick={saveEdit}
                                 disabled={saving}
-                                className="flex-1 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-colors disabled:opacity-50"
+                                className="flex-1 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-colors disabled:opacity-50"
                             >
                                 {saving ? 'Saving...' : 'Save Changes'}
                             </button>
@@ -176,10 +189,10 @@ export default function AdminUsers() {
                         </div>
                     </div>
                 </div>
-            )}
+            , document.body)}
 
             {/* Delete Confirm Modal */}
-            {deleteConfirm !== null && (
+            {deleteConfirm !== null && createPortal(
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 p-6 text-center">
                         <div className="w-14 h-14 rounded-full bg-rose-100 dark:bg-rose-500/10 flex items-center justify-center mx-auto mb-4">
@@ -197,23 +210,27 @@ export default function AdminUsers() {
                         </div>
                     </div>
                 </div>
-            )}
+            , document.body)}
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 <div className="relative flex-1">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         placeholder="Search by name or email..."
                         value={search}
-                        onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                        onChange={(e) => {
+ setSearch(e.target.value); setPage(1); 
+}}
                     />
                 </div>
                 <select
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     value={roleFilter}
-                    onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
+                    onChange={(e) => {
+ setRoleFilter(e.target.value); setPage(1); 
+}}
                 >
                     <option value="">All Roles</option>
                     <option value="user">User</option>
@@ -227,7 +244,12 @@ export default function AdminUsers() {
             )}
 
             {/* Table */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl shadow-slate-200/20 dark:shadow-none"
+            >
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -258,7 +280,7 @@ export default function AdminUsers() {
                                     <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-orange-500 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-orange-500 flex items-center justify-center text-white font-bold text-xs shrink-0">
                                                     {u.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
@@ -271,7 +293,7 @@ export default function AdminUsers() {
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
                                                 u.role === 'admin'
                                                     ? 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                                                    : 'bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400'
+                                                    : 'bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400'
                                             }`}>
                                                 {u.role === 'admin' ? <ShieldCheck className="w-3 h-3" /> : <User className="w-3 h-3" />}
                                                 {u.role}
@@ -284,7 +306,7 @@ export default function AdminUsers() {
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => openEdit(u)}
-                                                    className="p-2 rounded-lg text-slate-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-colors"
+                                                    className="p-2 rounded-lg text-slate-400 hover:text-cyan-500 hover:bg-cyan-50 dark:hover:bg-cyan-500/10 transition-colors"
                                                     title="Edit"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
@@ -330,7 +352,7 @@ export default function AdminUsers() {
                         </div>
                     </div>
                 )}
-            </div>
+            </motion.div>
         </AppLayout>
     );
 }

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import AppLayout from '@/components/skorge/AppLayout';
 import { Bot, Sparkles, ChevronRight, CheckCircle2, Crosshair, Code2, LineChart, Target, Rocket } from 'lucide-react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AppLayout from '@/components/skorge/AppLayout';
 import { useAuth } from '@/lib/auth';
 
 const QUESTIONS = [
@@ -61,8 +61,14 @@ export default function AIOnboarding() {
     };
 
     const getRecommendation = () => {
-        if (answers.interest === 'visuals') return { id: 3, role: 'UI/UX Designer', level: answers.experience };
-        if (answers.interest === 'numbers') return { id: 2, role: 'Data Analyst', level: answers.experience };
+        if (answers.interest === 'visuals') {
+return { id: 3, role: 'UI/UX Designer', level: answers.experience };
+}
+
+        if (answers.interest === 'numbers') {
+return { id: 2, role: 'Data Analyst', level: answers.experience };
+}
+
         return { id: 1, role: 'Frontend Developer', level: answers.experience };
     };
 
@@ -71,10 +77,10 @@ export default function AIOnboarding() {
             <AppLayout hideSidebar hideFooter>
                 <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
                     <div className="relative w-32 h-32 mb-8">
-                        <div className="absolute inset-0 bg-sky-500 rounded-full animate-ping opacity-20" />
-                        <div className="absolute inset-2 bg-gradient-to-tr from-sky-500 to-orange-500 rounded-full animate-spin flex items-center justify-center shadow-lg shadow-sky-500/50" style={{ animationDuration: '3s' }}>
+                        <div className="absolute inset-0 bg-cyan-500 rounded-full animate-ping opacity-20" />
+                        <div className="absolute inset-2 bg-gradient-to-tr from-cyan-500 to-orange-500 rounded-full animate-spin flex items-center justify-center shadow-lg shadow-cyan-500/50" style={{ animationDuration: '3s' }}>
                             <div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center">
-                                <Bot className="w-10 h-10 text-sky-400" />
+                                <Bot className="w-10 h-10 text-cyan-400" />
                             </div>
                         </div>
                     </div>
@@ -95,12 +101,12 @@ export default function AIOnboarding() {
             <div className="max-w-3xl mx-auto pt-10 pb-20">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-500/10 border border-sky-500/20 rounded-full mb-6">
-                        <Sparkles className="w-4 h-4 text-sky-400" />
-                        <span className="text-sky-400 font-bold text-sm">AI Career Navigator</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full mb-6">
+                        <Sparkles className="w-4 h-4 text-cyan-400" />
+                        <span className="text-cyan-400 font-bold text-sm">AI Career Navigator</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                        Let's find your <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-orange-400">perfect role.</span>
+                        Let's find your <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-orange-400">perfect role.</span>
                     </h1>
                 </div>
 
@@ -109,7 +115,7 @@ export default function AIOnboarding() {
                     {/* Progress Bar */}
                     <div className="absolute top-0 left-0 h-1.5 bg-slate-800 w-full">
                         <div 
-                            className="h-full bg-gradient-to-r from-sky-500 to-orange-500 transition-all duration-500" 
+                            className="h-full bg-gradient-to-r from-cyan-500 to-orange-500 transition-all duration-500" 
                             style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }}
                         />
                     </div>
@@ -129,16 +135,16 @@ export default function AIOnboarding() {
                                     onClick={() => handleSelectOption(currentQuestion.id, opt.id)}
                                     className={`relative p-6 rounded-2xl border-2 text-left transition-all group ${
                                         isSelected 
-                                        ? 'border-sky-500 bg-sky-500/10 ring-4 ring-sky-500/10' 
+                                        ? 'border-cyan-500 bg-cyan-500/10 ring-4 ring-cyan-500/10' 
                                         : 'border-slate-800 bg-slate-950/50 hover:border-slate-600 hover:bg-slate-800'
                                     }`}
                                 >
                                     {Icon && (
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${isSelected ? 'bg-sky-500/20' : 'bg-slate-800 group-hover:bg-slate-700'}`}>
-                                            <Icon className={`w-6 h-6 ${isSelected ? 'text-sky-400' : 'text-slate-400'}`} />
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${isSelected ? 'bg-cyan-500/20' : 'bg-slate-800 group-hover:bg-slate-700'}`}>
+                                            <Icon className={`w-6 h-6 ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`} />
                                         </div>
                                     )}
-                                    <h3 className={`font-bold text-lg mb-1 transition-colors ${isSelected ? 'text-sky-400' : 'text-white'}`}>
+                                    <h3 className={`font-bold text-lg mb-1 transition-colors ${isSelected ? 'text-cyan-400' : 'text-white'}`}>
                                         {opt.label}
                                     </h3>
                                     {(opt as any).desc && (
@@ -147,7 +153,7 @@ export default function AIOnboarding() {
                                     
                                     {/* Selection Indicator */}
                                     <div className={`absolute top-6 right-6 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                                        isSelected ? 'border-sky-500 bg-sky-500 scale-100' : 'border-slate-700 scale-0 group-hover:scale-100'
+                                        isSelected ? 'border-cyan-500 bg-cyan-500 scale-100' : 'border-slate-700 scale-0 group-hover:scale-100'
                                     }`}>
                                         {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
                                     </div>
@@ -169,7 +175,7 @@ export default function AIOnboarding() {
                             disabled={!hasAnswered}
                             className={`flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all ${
                                 hasAnswered 
-                                ? 'bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-500/20 hover:scale-[1.02]' 
+                                ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/20 hover:scale-[1.02]' 
                                 : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                             }`}
                         >

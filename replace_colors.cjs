@@ -7,6 +7,7 @@ function walk(dir) {
     list.forEach(function(file) {
         file = path.join(dir, file);
         const stat = fs.statSync(file);
+
         if (stat && stat.isDirectory()) { 
             results = results.concat(walk(file));
         } else { 
@@ -15,6 +16,7 @@ function walk(dir) {
             }
         }
     });
+
     return results;
 }
 

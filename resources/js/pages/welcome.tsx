@@ -1,43 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import AppLayout from '@/components/skorge/AppLayout';
-import { JobRoleCard } from '@/components/skorge/JobRoleCard';
-import { CourseCard } from '@/components/skorge/CourseCard';
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ArrowRight, Trophy, Target, Zap } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import AppLayout from '@/components/skorge/AppLayout';
+import { CourseCard } from '@/components/skorge/CourseCard';
+import { JobRoleCard } from '@/components/skorge/JobRoleCard';
 import api from '@/lib/api';
 import { useTranslation } from '@/lib/i18n';
-import { motion } from 'framer-motion';
 
 export default function Welcome() {
     const { t } = useTranslation();
+    const [stats, setStats] = useState({ paths: 0, courses: 0, hireRate: 94, verified: 0 });
     const [roles, setRoles] = useState<any[]>([]);
     const [courses, setCourses] = useState<any[]>([]);
     const [introDone, setIntroDone] = useState(() => {
         return sessionStorage.getItem('hasSeenIntro') === 'true';
     });
 
+
     useEffect(() => {
         // Consumer API dari Laravel (Axios)
+        api.get('/stats/platform').then(res => setStats(res.data)).catch(console.error);
         api.get('/job-roles').then(res => setRoles(res.data)).catch(console.error);
         api.get('/courses').then(res => setCourses(res.data.data || res.data)).catch(console.error);
         
         const handleIntroDone = () => setIntroDone(true);
         window.addEventListener('introFinished', handleIntroDone);
+
         return () => window.removeEventListener('introFinished', handleIntroDone);
     }, []);
 
-    // Fallback Dummy Data while loading/if API down
-    const displayRoles = roles.length ? roles : [
-        { id: 1, name: 'Frontend Developer', category: 'Engineering', courses_count: 8, icon: 'code', description: 'Master React, Vue, and modern CSS architecture to build stunning user interfaces.' },
-        { id: 2, name: 'Data Analyst', category: 'Data', courses_count: 10, icon: 'chart', description: 'Learn SQL, Python, and Tableau to extract actionable insights from raw data.' },
-        { id: 3, name: 'UI/UX Designer', category: 'Design', courses_count: 6, icon: 'design', description: 'Design engaging digital experiences using Figma and user research methodologies.' },
-    ];
-
-    const displayCourses = courses.length ? courses : [
-        { id: 1, title: 'Advanced React Patterns', field: 'IT', level: 'Advanced', duration_minutes: 120, thumbnail: '/thumbnails/web-fundamentals.png' },
-        { id: 2, title: 'SQL for Beginners', field: 'Data', level: 'Beginner', duration_minutes: 90, thumbnail: '/thumbnails/data.png' },
-        { id: 3, title: 'Figma Prototyping Masterclass', field: 'Design', level: 'Intermediate', duration_minutes: 150, thumbnail: '/thumbnails/design.png' },
-    ];
+    // Now fully connected to DB! No fallback needed.
+    const displayRoles = roles.slice(0, 3);
+    const displayCourses = courses;
+    const topCourses = courses.slice(0, 3);
 
     return (
         <AppLayout fullWidth>
@@ -99,7 +95,7 @@ export default function Welcome() {
                         initial={{ opacity: 0, scale: 0.8, y: 40, rotateX: 45 }}
                         animate={introDone ? { opacity: 1, scale: 1, y: 0, rotateX: 0 } : { opacity: 0, scale: 0.8, y: 40, rotateX: 45 }}
                         transition={{ duration: 1, type: "spring", bounce: 0.5 }}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/40 dark:bg-[#0B1120]/60 backdrop-blur-2xl border border-white/50 dark:border-white/10 text-slate-800 dark:text-sky-300 text-sm font-bold xl:text-base mb-10 shadow-lg"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/40 dark:bg-[#0B1120]/60 backdrop-blur-2xl border border-white/50 dark:border-white/10 text-slate-800 dark:text-cyan-300 text-sm font-bold xl:text-base mb-10 shadow-lg"
                     >
                         <Zap className="w-5 h-5 text-amber-500 animate-pulse" />
                         <span>{t('home.tagline')}</span>
@@ -154,25 +150,28 @@ export default function Welcome() {
                     className="relative z-10 w-full max-w-5xl mx-auto mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 px-4 bg-transparent border-t-0"
                 >
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2">15+</div>
+                        <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2">{stats.paths > 0 ? `${stats.paths}+` : '...'}</div>
                         <div className="text-xs md:text-sm font-semibold tracking-widest text-slate-500 uppercase text-center">{t('home.stats.paths')}</div>
                     </div>
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2">200+</div>
+                        <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2">{stats.courses > 0 ? `${stats.courses}+` : '...'}</div>
                         <div className="text-xs md:text-sm font-semibold tracking-widest text-slate-500 uppercase text-center">{t('home.stats.courses')}</div>
                     </div>
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2">94%</div>
+                        <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2">{stats.hireRate}%</div>
                         <div className="text-xs md:text-sm font-semibold tracking-widest text-slate-500 uppercase text-center">{t('home.stats.hireRate')}</div>
                     </div>
                     <div className="flex flex-col items-center">
                         <div className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2 flex items-center justify-center gap-2">
-                            <Trophy className="w-6 h-6 md:w-8 md:h-8 text-amber-500" /> 4K+
+                            <Trophy className="w-6 h-6 md:w-8 md:h-8 text-amber-500" /> {stats.verified > 0 ? stats.verified : '...'}
                         </div>
                         <div className="text-xs md:text-sm font-semibold tracking-widest text-slate-500 uppercase text-center">{t('home.stats.verified')}</div>
                     </div>
                 </motion.div>
             </div>
+
+            {/* ═══ Scroll-driven Logo Reveal → Top 3 Courses ═══ */}
+            <LogoScrollSection courses={topCourses} />
 
             {/* Featured Career Paths */}
             <motion.div 
@@ -212,15 +211,15 @@ export default function Welcome() {
                     </motion.div>
                 </div>
                 
-                {/* STAGGERED / MASONRY GRID DESTRUCTION */}
+                {/* Career Path Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
                     {displayRoles.map((role: any, index: number) => (
                         <motion.div
                             key={role.id}
-                            initial={{ opacity: 0, y: 100, rotate: index % 2 === 0 ? -4 : 4 }}
-                            whileInView={{ opacity: 1, y: index % 2 !== 0 ? 60 : 0, rotate: 0 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ duration: 0.8, delay: index * 0.15, type: "spring", bounce: 0.5 }}
+                            initial={{ opacity: 0, y: 60 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-50px' }}
+                            transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                             className="h-full"
                         >
                             <JobRoleCard role={role} href={`/job-roles/${role.id}`} isFeatured={index === 0} />
@@ -229,52 +228,91 @@ export default function Welcome() {
                 </div>
             </motion.div>
 
-            {/* Featured Courses */}
+        </AppLayout>
+    );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   LogoScrollSection  –  simple whileInView (no sticky / no blank)
+   Logo fades + scales in when section enters viewport.
+   Top-3 courses appear below with a staggered slide-up.
+───────────────────────────────────────────────────────────────── */
+function LogoScrollSection({ courses }: { courses: any[] }) {
+    return (
+        <section className="w-full py-24 px-4 md:px-8 flex flex-col items-center gap-16">
+
+            {/* ── Logo reveal ── */}
             <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 1 }}
-                className="mb-32 mt-32 px-4 md:px-8 max-w-7xl mx-auto w-full"
+                initial={{ opacity: 0, scale: 0.8, y: 40 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                className="flex flex-col items-center gap-6"
             >
-                <div className="flex flex-col mb-16 text-center lg:text-left lg:flex-row lg:items-end justify-between gap-6">
-                    <motion.div 
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                    >
-                        <h2 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter leading-none">{t('home.essentialModules', { defaultValue: 'Essential Modules' })}</h2>
-                        <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 font-medium max-w-2xl">{t('home.essentialDesc', { defaultValue: 'High-impact single courses to immediately level up specific skills.' })}</p>
-                    </motion.div>
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                    >
-                        <Link to="/courses" className="inline-flex items-center text-white bg-slate-900 dark:bg-white dark:text-slate-900 font-bold px-8 py-4 rounded-full transition-all hover:scale-110 shadow-xl duration-300 text-lg">
-                            View Catalog <ArrowRight className="w-5 h-5 ml-3" />
-                        </Link>
-                    </motion.div>
+                {/* Soft glow behind logo */}
+                <div className="relative flex items-center justify-center">
+                    <div className="absolute w-80 h-80 rounded-full bg-cyan-400/10 dark:bg-cyan-400/8 blur-3xl pointer-events-none" />
+                    <img
+                        src="/logo vector.svg"
+                        alt="SKORGE"
+                        className="relative w-40 md:w-60 lg:w-80 h-auto select-none pointer-events-none"
+                        style={{
+                            filter:
+                                'drop-shadow(0 0 32px rgba(0,210,255,0.30)) ' +
+                                'drop-shadow(0 0 12px rgba(255,115,0,0.20))',
+                        }}
+                        draggable={false}
+                    />
                 </div>
-                
-                {/* STAGGERED / ASYMMETRICAL CARDS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-                    {displayCourses.slice(0, 3).map((course: any, index: number) => (
+            </motion.div>
+
+            {/* ── Section label ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-center"
+            >
+                <p className="text-xs font-black tracking-[0.45em] uppercase text-cyan-500 dark:text-cyan-400 mb-3">
+                    Top Courses
+                </p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-slate-900 dark:text-white">
+                    Start Learning Today
+                </h2>
+            </motion.div>
+
+            {/* ── Top 3 course cards ── */}
+            {courses.length > 0 && (
+                <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                    {courses.map((course: any, i: number) => (
                         <motion.div
                             key={course.id}
-                            initial={{ opacity: 0, scale: 0.9, y: 80, rotate: index % 2 === 0 ? 3 : -3 }}
-                            whileInView={{ opacity: 1, scale: 1, y: index % 2 !== 0 ? 40 : 0, rotate: 0 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ duration: 0.7, delay: index * 0.15, type: "spring", bounce: 0.4 }}
-                            className="h-full"
+                            initial={{ opacity: 0, y: 50 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                         >
                             <CourseCard course={course} href={`/courses/${course.id}`} />
                         </motion.div>
                     ))}
                 </div>
+            )}
+
+            {/* ── CTA ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+            >
+                <Link
+                    to="/courses"
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base hover:scale-105 transition-transform duration-300 shadow-xl"
+                >
+                    View All Courses <ArrowRight className="w-5 h-5" />
+                </Link>
             </motion.div>
-        </AppLayout>
+        </section>
     );
 }

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 type Language = 'en' | 'id';
 
@@ -39,9 +40,11 @@ const translations: Record<Language, Record<string, string>> = {
         'dashboard.upNext': 'Up Next',
         'dashboard.continueLearningBtn': 'Continue Learning',
         'dashboard.noPathDesc': "You haven't selected a target career path yet.",
+        'dashboard.noPathTitle': 'Unlock Your Potential',
         'dashboard.explorePathsBtn': 'Explore Career Paths',
         'dashboard.resumeLearning': 'Resume Learning',
         'dashboard.noCourses': 'You have not started any courses.',
+        'dashboard.noCoursesTitle': 'Ready to Level Up?',
         'dashboard.findCourseBtn': 'Find a Course to Start',
         'dashboard.currentStanding': 'Current Standing',
         'dashboard.keepEarning': 'Keep earning XP to climb the ranks and reach the Top 10%.',
@@ -97,6 +100,10 @@ const translations: Record<Language, Record<string, string>> = {
         'quiz.questionProgress': 'Question {current} of {total}',
         'quiz.submit': 'Submit Final Answers',
         'quiz.next': 'Next Question',
+        
+        // Gamification
+        'gamification.xpEarned': 'XP Earned',
+        'gamification.levelUp': 'Level Up!',
         
         // General UI
         'general.explore': 'Explore',
@@ -220,13 +227,14 @@ const translations: Record<Language, Record<string, string>> = {
         // Certificates Page
         'certs.title': 'My Certificates',
         'certs.subtitle': 'Industry-recognized credentials proving your readiness for the job.',
-        'certs.filterPlaceholder': 'Filter by role or ID...',
+        'certs.filterPlaceholder': 'Filter by role, course, or ID...',
         'certs.empty': 'No certificates yet',
-        'certs.emptyDesc': 'Complete a career path to earn your first industry-recognized certificate.',
+        'certs.emptyDesc': 'Complete a career path or course to earn your first certificate.',
         'certs.viewCourses': 'View Courses',
         'certs.typeTitle': 'Certificate of Completion',
         'certs.certifiesThat': 'This certifies that',
         'certs.completedPathFor': 'has successfully completed the career path for',
+        'certs.completedCourse': 'has successfully completed the course',
         'certs.dateIssued': 'Date Issued',
         'certs.credentialId': 'Credential ID',
         'certs.verifiedSkills': 'Verified Skills',
@@ -235,6 +243,13 @@ const translations: Record<Language, Record<string, string>> = {
         'certs.shareLinkedIn': 'Share on LinkedIn',
         'certs.copyLink': 'Copy Link',
         'certs.copied': 'Copied!',
+        'certs.all': 'All',
+        'certs.jobRole': 'Job Role',
+        'certs.course': 'Course',
+        'certs.jobRoleCertificate': 'Job Role Certificate',
+        'certs.courseCertificate': 'Course Certificate',
+        'certs.partOf': 'Part of',
+        'certs.path': 'path',
 
         // CV Builder
         'cv.title': 'Auto CV Builder',
@@ -286,9 +301,11 @@ const translations: Record<Language, Record<string, string>> = {
         'dashboard.upNext': 'Selanjutnya',
         'dashboard.continueLearningBtn': 'Lanjutkan Pembelajaran',
         'dashboard.noPathDesc': "Kamu belum memilih target jalur karier.",
+        'dashboard.noPathTitle': 'Buka Potensimu',
         'dashboard.explorePathsBtn': 'Jelajahi Jalur Karier',
         'dashboard.resumeLearning': 'Lanjutkan Belajar',
         'dashboard.noCourses': 'Kamu belum memulai kursus apa pun.',
+        'dashboard.noCoursesTitle': 'Siap Naik Level?',
         'dashboard.findCourseBtn': 'Cari Kursus untuk Dimulai',
         'dashboard.currentStanding': 'Peringkat Saat Ini',
         'dashboard.keepEarning': 'Terus kumpulkan XP untuk naik peringkat dan mencapai Top 10%.',
@@ -344,6 +361,10 @@ const translations: Record<Language, Record<string, string>> = {
         'quiz.questionProgress': 'Pertanyaan {current} dari {total}',
         'quiz.submit': 'Kirim Jawaban Akhir',
         'quiz.next': 'Pertanyaan Selanjutnya',
+
+        // Gamification
+        'gamification.xpEarned': 'XP Diraih',
+        'gamification.levelUp': 'Naik Level!',
 
         // General UI
         'general.explore': 'Jelajahi',
@@ -459,13 +480,14 @@ const translations: Record<Language, Record<string, string>> = {
         // Certificates Page
         'certs.title': 'Sertifikat Saya',
         'certs.subtitle': 'Kredensial yang diakui industri membuktikan kesiapan kerja Anda.',
-        'certs.filterPlaceholder': 'Saring berdasarkan peran atau ID...',
+        'certs.filterPlaceholder': 'Saring berdasarkan peran, kursus, atau ID...',
         'certs.empty': 'Belum ada sertifikat',
-        'certs.emptyDesc': 'Selesaikan jalur karier untuk mendapatkan sertifikat pertama Anda.',
+        'certs.emptyDesc': 'Selesaikan jalur karier atau kursus untuk mendapatkan sertifikat pertama Anda.',
         'certs.viewCourses': 'Lihat Kursus',
         'certs.typeTitle': 'Sertifikat Penyelesaian',
         'certs.certifiesThat': 'Ini menyatakan bahwa',
         'certs.completedPathFor': 'telah berhasil menyelesaikan jalur karier untuk',
+        'certs.completedCourse': 'telah berhasil menyelesaikan kursus',
         'certs.dateIssued': 'Tanggal Diterbitkan',
         'certs.credentialId': 'ID Kredensial',
         'certs.verifiedSkills': 'Keterampilan Terverifikasi',
@@ -474,6 +496,13 @@ const translations: Record<Language, Record<string, string>> = {
         'certs.shareLinkedIn': 'Bagikan ke LinkedIn',
         'certs.copyLink': 'Salin Tautan',
         'certs.copied': 'Tersalin!',
+        'certs.all': 'Semua',
+        'certs.jobRole': 'Peran Karier',
+        'certs.course': 'Kursus',
+        'certs.jobRoleCertificate': 'Sertifikat Peran Karier',
+        'certs.courseCertificate': 'Sertifikat Kursus',
+        'certs.partOf': 'Bagian dari',
+        'certs.path': 'jalur',
 
 
         // My Courses Page
@@ -511,6 +540,7 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export function I18nProvider({ children }: { children: ReactNode }) {
     const [lang, setLang] = useState<Language>(() => {
         const saved = localStorage.getItem('skorge_lang');
+
         return (saved as Language) || 'en';
     });
 
@@ -521,12 +551,14 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     };
 
     const t = (key: string, params?: Record<string, string | number>) => {
-        let text = translations[lang][key] || key;
+        let text = translations[lang][key] || (params?.defaultValue as string) || key;
+
         if (params) {
             Object.entries(params).forEach(([k, v]) => {
                 text = text.replace(`{${k}}`, String(v));
             });
         }
+
         return text;
     };
 
@@ -535,6 +567,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
 export const useTranslation = () => {
     const ctx = useContext(I18nContext);
-    if (!ctx) throw new Error('useTranslation must be used within I18nProvider');
+
+    if (!ctx) {
+throw new Error('useTranslation must be used within I18nProvider');
+}
+
     return ctx;
 };

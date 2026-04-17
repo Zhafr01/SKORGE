@@ -1,9 +1,9 @@
-import AppLayout from '@/components/skorge/AppLayout';
-import React, { useState, useRef, useEffect } from 'react';
-import { useAuth } from '@/lib/auth';
 import { Camera, Save, User, ArrowLeft, Loader2, Image as ImageIcon, X } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import AppLayout from '@/components/skorge/AppLayout';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 
 export default function Profile() {
     const { user, refreshUser } = useAuth();
@@ -24,12 +24,15 @@ export default function Profile() {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             // Validate size (<2MB)
             if (file.size > 2 * 1024 * 1024) {
                 setErrorMessage('Image size must be less than 2MB');
+
                 return;
             }
+
             setFile(file);
             setErrorMessage('');
             const reader = new FileReader();
@@ -49,6 +52,7 @@ export default function Profile() {
         try {
             const formData = new FormData();
             formData.append('name', name);
+
             if (file) {
                 formData.append('avatar', file);
             }
@@ -82,7 +86,7 @@ export default function Profile() {
         <AppLayout hideSidebar hideBreadcrumbs>
             <div className="min-h-screen bg-slate-50/50 dark:bg-[#060D1A] pt-24 pb-12 relative overflow-hidden">
                 {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-sky-500/10 dark:bg-sky-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-500/10 dark:bg-cyan-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                 
                 <div className="max-w-4xl mx-auto px-6 relative z-10">
                     <Link to="/stats" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mb-8 shadow-sm">
@@ -137,8 +141,10 @@ export default function Profile() {
 
                                         <button 
                                             type="button" 
-                                            className="absolute bottom-0 right-0 w-10 h-10 bg-sky-500 hover:bg-sky-400 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900 transition-transform hover:scale-110 z-40"
-                                            onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                                            className="absolute bottom-0 right-0 w-10 h-10 bg-cyan-500 hover:bg-cyan-400 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900 transition-transform hover:scale-110 z-40"
+                                            onClick={(e) => {
+ e.stopPropagation(); fileInputRef.current?.click(); 
+}}
                                         >
                                             <Camera className="w-5 h-5" />
                                         </button>
@@ -167,7 +173,7 @@ export default function Profile() {
                                                 id="name"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-shadow outline-none font-medium"
+                                                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-shadow outline-none font-medium"
                                                 placeholder="Your full name"
                                                 required
                                             />
@@ -179,7 +185,7 @@ export default function Profile() {
                                     <button
                                         type="submit"
                                         disabled={isSaving}
-                                        className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-slate-900 hover:bg-slate-800 dark:bg-sky-500 dark:hover:bg-sky-400 text-white rounded-2xl font-bold shadow-xl shadow-slate-200 dark:shadow-sky-500/20 transition-all active:scale-[0.98]"
+                                        className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-slate-900 hover:bg-slate-800 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white rounded-2xl font-bold shadow-xl shadow-slate-200 dark:shadow-cyan-500/20 transition-all active:scale-[0.98]"
                                     >
                                         {isSaving ? (
                                             <>

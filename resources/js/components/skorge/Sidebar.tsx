@@ -1,9 +1,9 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Compass, LayoutDashboard, LogOut, Award, Bookmark, Info, Menu, X, FileText, Briefcase, TrendingUp, Library, Moon, Sun, Languages, Shield } from 'lucide-react';
 import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
-import { useTheme } from '@/lib/theme';
 import { useTranslation } from '@/lib/i18n';
+import { useTheme } from '@/lib/theme';
 
 interface SidebarProps {
     className?: string;
@@ -77,6 +77,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                     <nav className="space-y-1">
                         {navItems.map((item) => {
                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+
                             return (
                                 <Link
                                     key={item.name}
@@ -87,13 +88,13 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                                         isCollapsed ? 'justify-center' : ''
                                     } ${
                                         isActive
-                                            ? 'bg-gradient-to-r from-sky-500/10 to-purple-500/10 text-sky-600 dark:text-sky-300 shadow-[inset_0_0_10px_rgba(14,165,233,0.1)] border border-sky-200/50 dark:border-sky-500/20'
+                                            ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-600 dark:text-cyan-300 shadow-[inset_0_0_10px_rgba(14,165,233,0.1)] border border-cyan-200/50 dark:border-cyan-500/20'
                                             : 'text-slate-600 dark:text-slate-400 border border-transparent hover:bg-white/50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                                     }`}
                                 >
-                                    <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-300 ${isActive ? 'text-sky-600 dark:text-sky-400 scale-110 drop-shadow-[0_0_8px_rgba(14,165,233,0.5)]' : ''}`} />
+                                    <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-300 ${isActive ? 'text-cyan-600 dark:text-cyan-400 scale-110 drop-shadow-[0_0_8px_rgba(14,165,233,0.5)]' : ''}`} />
                                     {!isCollapsed && <span>{item.name}</span>}
-                                    {isActive && !isCollapsed && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-sky-400 drop-shadow-[0_0_4px_rgba(14,165,233,1)]" />}
+                                    {isActive && !isCollapsed && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 drop-shadow-[0_0_4px_rgba(14,165,233,1)]" />}
                                 </Link>
                             );
                         })}
@@ -106,6 +107,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                         <nav className="space-y-1">
                             {personalItems.map((item) => {
                                 const isActive = pathname.startsWith(item.href);
+
                                 return (
                                     <Link
                                         key={item.name}
@@ -116,11 +118,11 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                                             isCollapsed ? 'justify-center' : ''
                                         } ${
                                             isActive
-                                                ? 'bg-gradient-to-r from-sky-500/10 to-purple-500/10 text-sky-600 dark:text-sky-300 shadow-[inset_0_0_10px_rgba(14,165,233,0.1)] border border-sky-200/50 dark:border-sky-500/20'
+                                                ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-600 dark:text-cyan-300 shadow-[inset_0_0_10px_rgba(14,165,233,0.1)] border border-cyan-200/50 dark:border-cyan-500/20'
                                                 : 'text-slate-600 dark:text-slate-400 border border-transparent hover:bg-white/50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                                         }`}
                                     >
-                                        <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-300 ${isActive ? 'text-sky-600 dark:text-sky-400 scale-110 drop-shadow-[0_0_8px_rgba(14,165,233,0.5)]' : ''}`} />
+                                        <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-300 ${isActive ? 'text-cyan-600 dark:text-cyan-400 scale-110 drop-shadow-[0_0_8px_rgba(14,165,233,0.5)]' : ''}`} />
                                         {!isCollapsed && <span>{item.name}</span>}
                                     </Link>
                                 );
@@ -161,7 +163,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                     className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     title={theme === 'dark' ? t('general.lightMode') : t('general.darkMode')}
                 >
-                    {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-600" />}
+                    {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-orange-600" />}
                 </button>
                 <button
                     onClick={toggleLanguage}
@@ -175,13 +177,13 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
             {isAuthenticated && user ? (
                 <div className={`p-4 border-t border-slate-200/50 dark:border-white/5 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
                     <div className={`flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-white/5 backdrop-blur-md mb-2 border border-slate-200/50 dark:border-white/10 shadow-sm ${isCollapsed ? 'justify-center p-2' : ''}`}>
-                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center font-bold text-white text-sm shrink-0 shadow-[0_0_15px_rgba(14,165,233,0.4)] overflow-hidden">
+                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-orange-500 flex items-center justify-center font-bold text-white text-sm shrink-0 shadow-[0_0_15px_rgba(14,165,233,0.4)] overflow-hidden">
                             {user.avatar ? <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" /> : user.name.charAt(0).toUpperCase()}
                         </div>
                         {!isCollapsed && (
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-slate-900 dark:text-white truncate drop-shadow-sm">{user.name}</p>
-                                <p className="text-xs font-medium text-sky-600 dark:text-sky-400 truncate">{user.xp_points ?? 0} XP</p>
+                                <p className="text-xs font-medium text-cyan-600 dark:text-cyan-400 truncate">{user.xp_points ?? 0} XP</p>
                             </div>
                         )}
                     </div>
@@ -206,7 +208,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                     <Link
                         to="/register"
                         onClick={() => setMobileOpen(false)}
-                        className="block w-full py-2.5 px-4 text-center rounded-xl font-medium bg-sky-600 hover:bg-sky-500 text-white transition-colors shadow-lg shadow-sky-500/20"
+                        className="block w-full py-2.5 px-4 text-center rounded-xl font-medium bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-500/20"
                     >
                         {t('nav.register')}
                     </Link>
@@ -220,7 +222,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
              <Link to="/" className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                 <LayoutDashboard className="w-6 h-6 text-slate-800 dark:text-white" />
              </Link>
-             <button onClick={() => setMobileOpen(!mobileOpen)} className="w-12 h-12 flex items-center justify-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/30 hover:scale-105 transition-transform">
+             <button onClick={() => setMobileOpen(!mobileOpen)} className="w-12 h-12 flex items-center justify-center rounded-full bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 hover:scale-105 transition-transform">
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
              </button>
              {isAuthenticated ? (
@@ -231,7 +233,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                          </Link>
                      )}
                      <Link to="/user/profile" className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center font-bold text-white text-xs overflow-hidden">
+                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-orange-500 flex items-center justify-center font-bold text-white text-xs overflow-hidden">
                              {user?.avatar ? <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" /> : user?.name.charAt(0).toUpperCase()}
                          </div>
                      </Link>
@@ -280,13 +282,14 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                 <div className="flex items-center justify-center gap-1 xl:gap-2 mx-1 xl:mx-6 shrink-0">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+
                         return (
                             <Link
                                 key={item.name}
                                 to={item.href}
                                 className={`px-2 xl:px-4 py-2 rounded-full font-bold text-xs xl:text-sm whitespace-nowrap transition-all duration-300 relative ${
                                     isActive
-                                        ? 'text-sky-600 dark:text-white'
+                                        ? 'text-cyan-600 dark:text-white'
                                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
                                 }`}
                             >
@@ -302,7 +305,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                 {/* Actions & Profile */}
                 <div className="flex items-center gap-1 xl:gap-2 pr-3 xl:pr-4 pl-1 shrink-0">
                     <button onClick={toggleTheme} className="p-2 rounded-full text-slate-500 hover:bg-white/50 dark:hover:bg-white/10 transition-colors">
-                        {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
+                        {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-orange-600" />}
                     </button>
                     {isAuthenticated && user ? (
                         <div className="flex items-center gap-2">
@@ -312,12 +315,12 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                                 </Link>
                             )}
                             <div className="relative group/profile">
-                                <Link to="/user/profile" className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full bg-white/70 dark:bg-white/10 border border-slate-200/50 dark:border-white/10 hover:border-sky-300 dark:hover:border-sky-500/50 transition-colors cursor-pointer shadow-sm">
+                                <Link to="/user/profile" className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full bg-white/70 dark:bg-white/10 border border-slate-200/50 dark:border-white/10 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-colors cursor-pointer shadow-sm">
                                     <div className="flex flex-col text-right hidden xl:flex">
                                         <span className="text-xs font-bold text-slate-800 dark:text-white leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">{user.name}</span>
-                                        <span className="text-[10px] font-bold text-sky-500 mt-0.5">{user.xp_points ?? 0} XP</span>
+                                        <span className="text-[10px] font-bold text-cyan-500 mt-0.5">{user.xp_points ?? 0} XP</span>
                                     </div>
-                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center font-bold text-white text-xs shadow-inner group-hover/profile:scale-110 transition-transform overflow-hidden">
+                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-orange-500 flex items-center justify-center font-bold text-white text-xs shadow-inner group-hover/profile:scale-110 transition-transform overflow-hidden">
                                          {user.avatar ? <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" /> : user.name.charAt(0).toUpperCase()}
                                     </div>
                                 </Link>
@@ -326,7 +329,7 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                                 <div className="absolute right-0 top-full mt-2 w-56 opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200 ease-out translate-y-2 group-hover/profile:translate-y-0 z-50">
                                     <div className="bg-white/90 dark:bg-[rgba(11,17,32,0.95)] backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden p-2 flex flex-col gap-1">
                                         {personalItems.map(item => (
-                                            <Link key={item.name} to={item.href} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-sky-600 dark:hover:text-sky-400 font-medium text-sm transition-colors">
+                                            <Link key={item.name} to={item.href} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium text-sm transition-colors">
                                                 <item.icon className="w-4 h-4 shrink-0 px-0" />
                                                 <span className="whitespace-nowrap">{item.name}</span>
                                             </Link>
@@ -340,10 +343,10 @@ export default function Sidebar({ className, isCollapsed, toggleCollapse }: Side
                         </div>
                     ) : (
                         <div className="flex items-center gap-1 xl:gap-2">
-                            <Link to="/login" className="px-2 xl:px-4 py-2 text-xs xl:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all whitespace-nowrap hidden sm:block">
+                            <Link to="/login" className="px-2 xl:px-4 py-2 text-xs xl:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all whitespace-nowrap hidden sm:block">
                                 {t('nav.login')}
                             </Link>
-                            <Link to="/register" className="px-3 xl:px-6 py-2 text-xs xl:text-sm font-bold text-white bg-sky-500 hover:bg-sky-400 rounded-full shadow-lg shadow-sky-500/20 transition-transform hover:scale-105 whitespace-nowrap">
+                            <Link to="/register" className="px-3 xl:px-6 py-2 text-xs xl:text-sm font-bold text-white bg-cyan-500 hover:bg-cyan-400 rounded-full shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 whitespace-nowrap">
                                 {t('nav.register')}
                             </Link>
                         </div>

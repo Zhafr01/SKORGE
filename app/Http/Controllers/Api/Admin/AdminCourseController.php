@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\JobRole;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,13 +14,14 @@ class AdminCourseController extends Controller
     {
         $search = $request->query('search', '');
         $jobRoleId = $request->query('job_role_id', '');
+        $perPage = $request->query('per_page', 20);
 
         $courses = Course::query()
             ->with('jobRole:id,name')
             ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
             ->when($jobRoleId, fn ($q) => $q->where('job_role_id', $jobRoleId))
             ->orderBy('order')
-            ->paginate(20);
+            ->paginate($perPage);
 
         return response()->json($courses);
     }
@@ -36,9 +36,15 @@ class AdminCourseController extends Controller
             'level' => 'required|in:Beginner,Intermediate,Advanced',
             'duration_minutes' => 'required|integer|min:0',
             'order' => 'nullable|integer|min:0',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title'] . '-' . Str::random(6));
+        $validated['slug'] = Str::slug($validated['title'].'-'.Str::random(6));
+
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('thumbnails', 'public');
+            $validated['thumbnail'] = '/storage/'.$path;
+        }
 
         $course = Course::query()->create($validated);
 
@@ -60,7 +66,13 @@ class AdminCourseController extends Controller
             'level' => 'sometimes|in:Beginner,Intermediate,Advanced',
             'duration_minutes' => 'sometimes|integer|min:0',
             'order' => 'nullable|integer|min:0',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
+
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('thumbnails', 'public');
+            $validated['thumbnail'] = '/storage/'.$path;
+        }
 
         $course->update($validated);
 

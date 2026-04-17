@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'AI Features', description: 'Endpoints for AI-powered CV generation, Job matching, and Quiz generation')]
@@ -144,25 +145,42 @@ class AiController extends Controller
         $request->validate([
             'role' => 'required|string',
             'skills' => 'nullable|array',
+            'projects' => 'nullable|array',
         ]);
 
         $role = $request->input('role');
         $skills = $request->input('skills', []);
+        $projects = $request->input('projects', []);
 
-        usleep(1500000);
+        usleep(1000000);
 
         $baseSummary = $this->aiSummaries[$role] ?? 'Versatile tech professional with a passion for continuous learning and problem solving. Dedicated to delivering high-quality results in cross-functional team environments.';
 
         if (! empty($skills)) {
             $skillsStr = implode(', ', array_slice($skills, 0, 3));
             $suffixes = [
-                " Deeply specialized in $skillsStr, ready to make an immediate, measurable impact.",
-                " Brings hands-on technical proficiency with $skillsStr to accelerate project delivery.",
-                " Leverages expertise in $skillsStr to craft robust, scalable solutions.",
-                " Continuously refining skills in $skillsStr to stay at the cutting edge of industry standards.",
-                " Combines a strong foundational knowledge of $skillsStr with a highly adaptable work ethic.",
+                " Deeply specialized in {$skillsStr}, ready to make an immediate, measurable impact.",
+                " Brings hands-on technical proficiency with {$skillsStr} to accelerate project delivery.",
+                " Leverages expertise in {$skillsStr} to craft robust, scalable solutions.",
+                " Continuously refining skills in {$skillsStr} to stay at the cutting edge of industry standards.",
+                " Combines a strong foundational knowledge of {$skillsStr} with a highly adaptable work ethic.",
             ];
             $baseSummary .= $suffixes[array_rand($suffixes)];
+        }
+
+        if (! empty($projects)) {
+            $cleanedProjects = array_map(function ($p) {
+                // Strip words like "Project", "App", etc. for better flow
+                return trim(str_ireplace(['project', 'app', 'application'], '', $p));
+            }, $projects);
+            $projectsStr = implode(' and ', array_slice($cleanedProjects, 0, 2));
+
+            $projectSuffixes = [
+                " Demonstrates practical expertise through impactful projects such as {$projectsStr}.",
+                " Proven ability to deliver real-world applications, highlighted by work on {$projectsStr}.",
+                " Hands-on experience developing sophisticated solutions like {$projectsStr}.",
+            ];
+            $baseSummary .= $projectSuffixes[array_rand($projectSuffixes)];
         }
 
         $prefixes = ['Driven and ', 'Highly capable ', 'Innovative ', 'Detail-oriented ', ''];
@@ -173,6 +191,94 @@ class AiController extends Controller
         }
 
         return response()->json(['summary' => $baseSummary]);
+    }
+
+    #[OA\Post(path: '/api/ai/describe-github', operationId: 'describeGithubProject', summary: 'Generate a description for a GitHub project', description: 'Generates a project name and professional description based on a GitHub link.', tags: ['AI Features'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['link'],
+            properties: [
+                new OA\Property(property: 'link', type: 'string', example: 'github.com/user/repo'),
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Successful response',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'name', type: 'string'),
+                new OA\Property(property: 'description', type: 'string'),
+            ]
+        )
+    )]
+    public function describeGithubProject(Request $request): JsonResponse
+    {
+        $request->validate([
+            'link' => 'required|string',
+        ]);
+
+        $link = rtrim(str_replace(['http://', 'https://', 'github.com/'], '', $request->input('link')), '/');
+        usleep(800000); // Simulate AI delay
+
+        $parts = explode('/', $link);
+        $repoName = end($parts) ?: 'Custom Project';
+        $ownerName = count($parts) >= 2 ? $parts[count($parts) - 2] : null;
+
+        $name = ucwords(str_replace(['-', '_'], ' ', $repoName));
+        $description = 'Developed an innovative software application showcasing problem-solving and coding skills. Engineered for performance and maintainability.';
+
+        if ($ownerName && $repoName) {
+            try {
+                $response = Http::timeout(5)->get("https://api.github.com/repos/{$ownerName}/{$repoName}");
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $githubDesc = $data['description'];
+                    $language = $data['language'];
+                    $topics = $data['topics'] ?? [];
+
+                    if (empty($githubDesc)) {
+                        $readmeRes = Http::timeout(4)->get("https://api.github.com/repos/{$ownerName}/{$repoName}/readme");
+                        if ($readmeRes->successful()) {
+                            $readmeData = $readmeRes->json();
+                            if (isset($readmeData['content'])) {
+                                $text = base64_decode($readmeData['content']);
+                                $text = strip_tags($text);
+                                $text = preg_replace('/\[([^\]]+)\]\([^\)]+\)/', '$1', $text); // strip markdown links
+                                $text = preg_replace('/#+/', '', $text); // strip headings
+                                $text = preg_replace('/\s+/', ' ', $text); // normalize spaces
+                                $text = trim(str_ireplace($name, '', $text)); // remove repo name header
+
+                                if (strlen($text) > 15) {
+                                    $githubDesc = substr($text, 0, 160).'...';
+                                }
+                            }
+                        }
+                    }
+
+                    if ($githubDesc || $language || ! empty($topics)) {
+                        $langStr = $language ? " Built primarily with {$language}." : '';
+                        $topicStr = ! empty($topics) ? ' Incorporates core concepts such as '.implode(', ', array_slice($topics, 0, 3)).'.' : '';
+                        $descStr = $githubDesc ? " {$githubDesc}" : ' Engineered for performance and reliable execution.';
+                        $description = "Designed and developed a robust solution.{$langStr}{$topicStr}{$descStr}";
+                    }
+                }
+            } catch (\Exception $e) {
+                // fallback to default description if Github API fails
+            }
+        } else {
+            $descriptions = [
+                'Developed a fully-featured application focusing on performance and user experience. Implemented custom features to solve complex business problems.',
+                'Designed and built scalable architecture with a focus on maintainability. Managed state efficiently.',
+            ];
+            $description = $descriptions[array_rand($descriptions)];
+        }
+
+        return response()->json([
+            'name' => $name,
+            'description' => $description,
+        ]);
     }
 
     #[OA\Post(path: '/api/ai/match-jobs', operationId: 'matchJobs', summary: 'Match Jobs using AI scoring', description: 'Scores a list of jobs based on the user\'s interest, enrolled courses, and skills.', tags: ['AI Features'])]

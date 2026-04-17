@@ -13,7 +13,7 @@ export default function AdminRoute({ children }: AdminRouteProps) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-slate-950">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-10 h-10 rounded-full border-4 border-sky-500 border-t-transparent animate-spin" />
+                    <div className="w-10 h-10 rounded-full border-4 border-cyan-500 border-t-transparent animate-spin" />
                     <p className="text-slate-400 text-sm">Checking permissions...</p>
                 </div>
             </div>

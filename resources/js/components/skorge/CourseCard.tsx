@@ -1,8 +1,8 @@
+import { PlayCircle, Clock, BookOpen, Lock, Unlock } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { PlayCircle, Clock, BookOpen, Lock, Unlock } from 'lucide-react';
-import { ProgressBar } from './UIComponents';
 import { useTranslation } from '@/lib/i18n';
+import { ProgressBar } from './UIComponents';
 
 interface CourseCardProps {
     course: any;
@@ -18,10 +18,10 @@ export function CourseCard({ course, href, progress, status }: CourseCardProps) 
     return (
         <Link 
             to={isLocked ? '#' : href} 
-            className={`group relative flex flex-col bg-white/60 dark:bg-[rgba(11,17,32,0.6)] backdrop-blur-2xl border ${isLocked ? 'border-white/40 dark:border-white/5 opacity-60' : 'border-white/60 dark:border-white/5 hover:border-sky-400/50 dark:hover:border-sky-500/40'} rounded-3xl overflow-hidden transition-all duration-500 hover:shadow-[0_8px_30px_rgba(14,165,233,0.15)] hover:-translate-y-2 ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'} h-full`}
+            className={`group relative flex flex-col bg-white/60 dark:bg-[rgba(11,17,32,0.6)] backdrop-blur-2xl border ${isLocked ? 'border-white/40 dark:border-white/5 opacity-60' : 'border-white/60 dark:border-white/5 hover:border-cyan-400/50 dark:hover:border-cyan-500/40'} rounded-3xl overflow-hidden transition-all duration-500 hover:shadow-[0_8px_30px_rgba(14,165,233,0.15)] hover:-translate-y-2 ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'} h-full`}
         >
             {/* Ambient Inner Glow Effect */}
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-br from-sky-400/20 to-teal-500/20 rounded-full blur-[40px] group-hover:scale-150 group-hover:from-sky-400/40 transition-all duration-700 z-0"></div>
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-br from-cyan-400/20 to-teal-500/20 rounded-full blur-[40px] group-hover:scale-150 group-hover:from-cyan-400/40 transition-all duration-700 z-0"></div>
 
             {/* Full Card Cover Image */}
             <div className="absolute inset-0 z-0">
@@ -33,15 +33,17 @@ export function CourseCard({ course, href, progress, status }: CourseCardProps) 
                     />
                 ) : (
                     <div className={`w-full h-full bg-gradient-to-tr ${
-                        course.field === 'IT' ? 'from-blue-900 to-sky-900' : 
+                        course.field === 'IT' ? 'from-blue-900 to-cyan-900' : 
                         course.field === 'Design' ? 'from-fuchsia-900 to-pink-900' : 
                         'from-emerald-900 to-teal-900'
                     } transition-transform duration-700 group-hover:scale-110`}></div>
                 )}
             </div>
 
-            {/* Cinematic Gradient Overlay (Dark to transparent) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/70 to-transparent z-10 transition-opacity duration-500 opacity-90 group-hover:opacity-75"></div>
+            {/* Global Dark Tint Overlay for Contrast */}
+            <div className="absolute inset-0 bg-slate-950/50 z-10 transition-all duration-500 group-hover:bg-slate-950/70"></div>
+            {/* Cinematic Gradient Overlay for Content Focus (Dark to transparent) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/90 to-transparent z-10 opacity-90"></div>
             
             {/* Lock Overlay */}
             {isLocked && (
@@ -71,8 +73,8 @@ export function CourseCard({ course, href, progress, status }: CourseCardProps) 
             </div>
 
             {/* Content Body (Floating on Bottom) */}
-            <div className="p-6 flex flex-col flex-1 relative z-30 justify-end min-h-[300px]">
-                <h3 className="text-xl font-bold text-white mb-2 leading-tight drop-shadow-md group-hover:text-sky-300 transition-colors">
+            <div className="p-6 pt-16 flex flex-col flex-1 relative z-30 justify-end min-h-[300px]">
+                <h3 className="text-xl font-bold text-white mb-2 leading-tight drop-shadow-md group-hover:text-cyan-300 transition-colors">
                     {course.title}
                 </h3>
                 <p className="text-sm text-slate-300 line-clamp-2 mb-6 drop-shadow-sm font-medium">
@@ -85,7 +87,7 @@ export function CourseCard({ course, href, progress, status }: CourseCardProps) 
                     ) : (
                         <div className="flex items-center justify-between w-full">
                             <span className="text-xs font-medium text-slate-400">SKORGE Expert</span>
-                            <div className="flex items-center gap-2 text-sky-400 font-bold text-sm group-hover:translate-x-1 transition-transform">
+                            <div className="flex items-center gap-2 text-cyan-400 font-bold text-sm group-hover:translate-x-1 transition-transform">
                                 <span>{t('courses.start', { defaultValue: 'Start Learning' })}</span>
                                 <PlayCircle className="w-5 h-5 drop-shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
                             </div>

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from './api';
 
 interface User {
@@ -38,10 +39,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const storedUser = localStorage.getItem('auth_user');
         const storedToken = localStorage.getItem('auth_token');
+
         if (storedToken && storedUser) {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
         }
+
         setIsLoading(false);
     }, []);
 
@@ -76,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch {
             // Ignore errors on logout
         }
+
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
         setToken(null);
@@ -86,12 +90,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await api.get('/user');
             const freshUser = response.data?.data ?? response.data;
+
             if (freshUser) {
                 setUser(freshUser);
                 localStorage.setItem('auth_user', JSON.stringify(freshUser));
             }
-        } catch {
-            // Silently ignore refresh errors
+        } catch (error: any) {
+            if (error.response?.status === 401) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_user');
+                setToken(null);
+                setUser(null);
+            }
         }
     };
 
@@ -116,8 +126,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextType {
     const context = useContext(AuthContext);
+
     if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
+
     return context;
 }

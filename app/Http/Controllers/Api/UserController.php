@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\QuizResult;
 use App\Models\User;
 use App\Models\VideoProgress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -15,13 +19,11 @@ class UserController extends Controller
 
         $learningPaths = $user->learningPaths()->with('jobRole')->get();
 
-        // Format paths
         $activePaths = $learningPaths->map(function ($path) {
             $jobRole = $path->jobRole;
-            $courses = clone $jobRole->courses; // Assuming JobRole has courses
+            $courses = clone $jobRole->courses;
             $totalCourses = max($courses->count(), 1);
-            // Simulate progression for demo unless tracked
-            $progress = 45;
+            $progress = $path->progress_percent ?? 0;
 
             return [
                 'id' => $path->id,
@@ -31,29 +33,41 @@ class UserController extends Controller
             ];
         });
 
-        // Global Rank %
         $totalUsers = max(User::count(), 1);
         $usersAhead = User::where('xp_points', '>', $user->xp_points)->count();
         $rankPercent = max(1, ceil((($usersAhead + 1) / $totalUsers) * 100));
 
-        $coursesCompleted = VideoProgress::query()
+        $userCourses = $this->getUserCoursesWithProgress($user);
+        $coursesCompleted = $userCourses->where('status', 'completed')->count();
+        $ongoingCourses = $userCourses->where('status', '!=', 'completed')->values();
+
+        $quizzesCompleted = QuizResult::query()
             ->where('user_id', $user->id)
-            ->where('completed', true)
-            ->distinct('course_id')
-            ->count('course_id');
+            ->where('passed', true)
+            ->count();
 
         return response()->json([
             'data' => [
                 'user' => $user,
                 'active_paths' => $activePaths,
-                'ongoing_courses' => [],
+                'ongoing_courses' => $ongoingCourses,
                 'stats' => [
                     'coursesCompleted' => $coursesCompleted,
+                    'quizzesCompleted' => $quizzesCompleted,
                     'hoursLearning' => $user->learning_hours ?? 0,
                     'currentStreak' => $user->current_streak ?? 0,
                     'globalRank' => "Top {$rankPercent}%",
                 ],
             ],
+        ]);
+    }
+
+    public function myCourses(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'data' => $this->getUserCoursesWithProgress($user)->values(),
         ]);
     }
 
@@ -67,7 +81,7 @@ class UserController extends Controller
     public function certificates(Request $request)
     {
         return response()->json([
-            'data' => $request->user()->certificates()->with('jobRole')->get(),
+            'data' => $request->user()->certificates()->with(['jobRole', 'course.jobRole'])->get(),
         ]);
     }
 
@@ -106,10 +120,10 @@ class UserController extends Controller
         if ($request->hasFile('avatar')) {
             if ($user->avatar) {
                 $oldPath = str_replace('/storage/', '', $user->avatar);
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+                Storage::disk('public')->delete($oldPath);
             }
             $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = '/storage/' . $path;
+            $user->avatar = '/storage/'.$path;
         }
 
         $user->save();
@@ -118,5 +132,51 @@ class UserController extends Controller
             'message' => 'Profile updated successfully.',
             'user' => $user,
         ]);
+    }
+
+    /**
+     * Get all courses where the user has at least one video progress record.
+     *
+     * @return Collection<int, array{id: int, title: string, slug: string, field: string|null, level: string, thumbnail: string, progress: int, status: string, completed_videos: int, total_videos: int}>
+     */
+    private function getUserCoursesWithProgress(User $user): Collection
+    {
+        $userVideoProgress = VideoProgress::query()
+            ->where('user_id', $user->id)
+            ->get()
+            ->keyBy('video_id');
+
+        if ($userVideoProgress->isEmpty()) {
+            return collect();
+        }
+
+        $videoIds = $userVideoProgress->keys()->toArray();
+
+        return Course::query()
+            ->whereHas('videos', fn ($q) => $q->whereIn('id', $videoIds))
+            ->with('videos')
+            ->get()
+            ->map(function ($course) use ($userVideoProgress) {
+                $totalVideos = $course->videos->count();
+                $completedVideos = $course->videos->filter(
+                    fn ($v) => $userVideoProgress->has($v->id) && $userVideoProgress[$v->id]->completed
+                )->count();
+
+                $progress = $totalVideos > 0 ? (int) round(($completedVideos / $totalVideos) * 100) : 0;
+
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'slug' => $course->slug,
+                    'field' => $course->field,
+                    'level' => $course->level,
+                    'thumbnail' => $course->thumbnail,
+                    'thumbnail_url' => $course->thumbnail,
+                    'progress' => $progress,
+                    'status' => $progress >= 100 ? 'completed' : 'in_progress',
+                    'completed_videos' => $completedVideos,
+                    'total_videos' => $totalVideos,
+                ];
+            });
     }
 }

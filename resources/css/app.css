@@ -68,9 +68,9 @@
     --card-foreground: #0f172a;
     --popover: #ffffff;
     --popover-foreground: #0f172a;
-    --primary: #00A3E0;
+    --primary: #00B4D8;
     --primary-foreground: #ffffff;
-    --secondary: #FF8C00;
+    --secondary: #FB923C;
     --secondary-foreground: #ffffff;
     --muted: #f1f5f9;
     --muted-foreground: #64748b;
@@ -80,21 +80,21 @@
     --destructive-foreground: #f8fafc;
     --border: #e2e8f0;
     --input: #e2e8f0;
-    --ring: #00A3E0;
-    --chart-1: #00A3E0;
-    --chart-2: #FF8C00;
+    --ring: #00B4D8;
+    --chart-1: #00B4D8;
+    --chart-2: #FB923C;
     --chart-3: #FF4500;
-    --chart-4: #38bdf8;
-    --chart-5: #fb923c;
+    --chart-4: #22d3ee;
+    --chart-5: #f97316;
     --radius: 0.625rem;
     --sidebar: #ffffff;
     --sidebar-foreground: #0f172a;
-    --sidebar-primary: #00A3E0;
+    --sidebar-primary: #00B4D8;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #f1f5f9;
     --sidebar-accent-foreground: #0f172a;
     --sidebar-border: #e2e8f0;
-    --sidebar-ring: #00A3E0;
+    --sidebar-ring: #00B4D8;
 }
 
 .dark {
@@ -104,9 +104,9 @@
     --card-foreground: #f8fafc;
     --popover: #0f172a;
     --popover-foreground: #f8fafc;
-    --primary: #00A3E0;
+    --primary: #00B4D8;
     --primary-foreground: #ffffff;
-    --secondary: #FF8C00;
+    --secondary: #FB923C;
     --secondary-foreground: #ffffff;
     --muted: #1e293b;
     --muted-foreground: #94a3b8;
@@ -116,20 +116,20 @@
     --destructive-foreground: #f8fafc;
     --border: #1e293b;
     --input: #1e293b;
-    --ring: #00A3E0;
-    --chart-1: #00A3E0;
-    --chart-2: #FF8C00;
+    --ring: #00B4D8;
+    --chart-1: #00B4D8;
+    --chart-2: #FB923C;
     --chart-3: #FF4500;
-    --chart-4: #0284c7;
+    --chart-4: #06b6d4;
     --chart-5: #ea580c;
     --sidebar: #0f172a;
     --sidebar-foreground: #f8fafc;
-    --sidebar-primary: #00A3E0;
+    --sidebar-primary: #00B4D8;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #1e293b;
     --sidebar-accent-foreground: #f8fafc;
     --sidebar-border: #1e293b;
-    --sidebar-ring: #00A3E0;
+    --sidebar-ring: #00B4D8;
 }
 
 @layer base {
@@ -139,5 +139,28 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+@layer base {
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+        background-color: #334155;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background-color: #475569;
     }
 }

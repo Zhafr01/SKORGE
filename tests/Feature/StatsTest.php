@@ -40,11 +40,11 @@ class StatsTest extends TestCase
         $response->assertStatus(200);
 
         $data = $response->json('data');
-        
+
         // At 6500 XP, should be Stage 4: Astra
         $this->assertEquals(4, $data['pet']['stage']);
         $this->assertEquals('Astra', $data['pet']['name']);
-        
+
         // Assert prizes unlocking (500, 2000, 6000 are unlocked) -> 3 prizes
         $unlockedCount = collect($data['prizes'])->where('unlocked', true)->count();
         $this->assertEquals(3, $unlockedCount);

@@ -5,6 +5,7 @@ export default function IntroOverlay() {
         if (typeof window !== 'undefined') {
             return !sessionStorage.getItem('hasSeenIntro');
         }
+
         return false;
     });
     
@@ -13,7 +14,9 @@ export default function IntroOverlay() {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        if (!showIntro) return;
+        if (!showIntro) {
+return;
+}
 
         // Fallback timeout in case video tracking fails
         const fallbackTimer = setTimeout(() => {
@@ -31,6 +34,7 @@ export default function IntroOverlay() {
             videoRef.current.muted = true;
             
             const playPromise = videoRef.current.play();
+
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
                     console.error("AutoPlay prevented or failed:", error);
@@ -50,10 +54,14 @@ export default function IntroOverlay() {
     };
 
     const handleVideoEnd = () => {
-        if (isFading) return;
+        if (isFading) {
+return;
+}
+
         setIsFading(true);
         setTimeout(() => {
             setShowIntro(false);
+
             if (typeof window !== 'undefined') {
                 sessionStorage.setItem('hasSeenIntro', 'true');
                 window.dispatchEvent(new Event('introFinished'));
@@ -61,7 +69,9 @@ export default function IntroOverlay() {
         }, 800); // 800ms duration matching the CSS transition
     };
 
-    if (!showIntro && !isFading) return null;
+    if (!showIntro && !isFading) {
+return null;
+}
 
     return (
         <div className={`fixed inset-0 z-[10000] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 ease-in-out ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>

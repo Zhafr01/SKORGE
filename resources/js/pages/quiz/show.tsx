@@ -1,10 +1,11 @@
+import { motion, AnimatePresence } from 'framer-motion';
+import { Target, CheckCircle2, ChevronRight, AlertCircle, Award, BrainCircuit, Sparkles } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/skorge/AppLayout';
 import LoadingOverlay from '@/components/skorge/LoadingOverlay';
-import { Target, CheckCircle2, ChevronRight, AlertCircle, Award, BrainCircuit, Sparkles } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import { useTranslation } from '@/lib/i18n';
 
 interface QuizQuestion {
@@ -38,6 +39,9 @@ export default function QuizShow() {
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState<number[]>([]);
     const [showResults, setShowResults] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [gamification, setGamification] = useState<any>(null);
+    const { refreshUser } = useAuth();
 
     useEffect(() => {
         const resolvedTopic = TOPIC_FALLBACK_MAP[id ?? ''] ?? `Course ${id}`;
@@ -69,7 +73,30 @@ export default function QuizShow() {
 
     const handleNext = () => {
         if (currentStep === questions.length - 1) {
-            setShowResults(true);
+            setSubmitting(true);
+            let score = 0;
+            answers.forEach((ans, i) => {
+                if (ans === questions[i].correct_index) {
+score++;
+}
+            });
+            
+            api.post('/stats/submit-quiz', {
+                score,
+                total_questions: questions.length,
+            }).then((res) => {
+                setGamification(res.data.gamification);
+
+                if (res.data.gamification?.xp_earned > 0) {
+                    refreshUser?.();
+                }
+
+                setShowResults(true);
+                setSubmitting(false);
+            }).catch(() => {
+                setShowResults(true);
+                setSubmitting(false);
+            });
         } else {
             setCurrentStep(s => s + 1);
         }
@@ -94,7 +121,7 @@ export default function QuizShow() {
                         <p className="text-slate-500 dark:text-slate-400 mb-6">{t('quiz.errorDesc')}</p>
                         <button
                             onClick={() => window.location.reload()}
-                            className="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl transition-all shadow-md"
+                            className="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-md"
                         >
                             {t('quiz.retry')}
                         </button>
@@ -107,7 +134,9 @@ export default function QuizShow() {
     if (showResults) {
         let score = 0;
         answers.forEach((ans, i) => {
-            if (ans === questions[i].correct_index) score++;
+            if (ans === questions[i].correct_index) {
+score++;
+}
         });
         const passed = score / questions.length >= 0.6;
 
@@ -134,21 +163,45 @@ export default function QuizShow() {
                         
                         <div className="max-w-2xl mx-auto mb-8 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-left shadow-sm">
                             <div className="flex items-center gap-2 mb-2">
-                                <BrainCircuit className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+                                <BrainCircuit className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                                 <h4 className="font-bold text-slate-800 dark:text-slate-200">{t('quiz.aiSummary')}</h4>
                             </div>
                             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                                 {passed ? t('quiz.excellent', { topic }) : t('quiz.review', { topic })}
                             </p>
                         </div>
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 text-sky-600 dark:text-sky-400 text-sm font-medium mb-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-sm font-medium mb-8">
                             <Sparkles className="w-4 h-4" />
                             AI-generated quiz on <span className="font-bold">{topic}</span>
                         </div>
+                        
+                        {gamification?.xp_earned > 0 && (
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-xl shadow-orange-500/20 relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
+                                <div className="relative z-10 flex flex-col items-center">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Sparkles className="w-6 h-6" />
+                                        <h3 className="text-xl font-black">{t('gamification.xpEarned')}</h3>
+                                    </div>
+                                    <div className="text-4xl font-black mb-2">+{gamification.xp_earned} XP</div>
+                                    {gamification.leveled_up && (
+                                        <div className="mt-2 inline-flex items-center gap-2 px-4 py-1 bg-white/20 rounded-full text-sm font-bold border border-white/40">
+                                            <span>Level Up!</span>
+                                            <span>You are now Level {gamification.new_level}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
 
                         <div className="space-y-6 text-left mb-10">
                             {questions.map((q, i) => {
                                 const isCorrect = answers[i] === q.correct_index;
+
                                 return (
                                     <div key={q.id} className={`p-5 rounded-2xl border ${isCorrect ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20' : 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20'}`}>
                                         <div className="flex gap-3 mb-2">
@@ -174,7 +227,9 @@ export default function QuizShow() {
                         <div className="flex justify-center gap-4">
                             {!passed && (
                                 <button
-                                    onClick={() => { setShowResults(false); setCurrentStep(0); setAnswers([]); }}
+                                    onClick={() => {
+ setShowResults(false); setCurrentStep(0); setAnswers([]); 
+}}
                                     className="px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
                                 >
                                     {t('quiz.retryQuiz')}
@@ -182,7 +237,7 @@ export default function QuizShow() {
                             )}
                             <button
                                 onClick={() => navigate('/dashboard')}
-                                className="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-all hover:scale-105 shadow-lg shadow-sky-500/20"
+                                className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-all hover:scale-105 shadow-lg shadow-cyan-500/20"
                             >
                                 {t('quiz.continue')}
                             </button>
@@ -209,16 +264,16 @@ export default function QuizShow() {
                     <div className="flex gap-2">
                         {questions.map((_, i) => (
                             <div key={i} className={`w-8 h-2 rounded-full transition-colors ${
-                                i === currentStep ? 'bg-sky-500' :
-                                i < currentStep ? 'bg-sky-200 dark:bg-sky-500/30' : 'bg-slate-200 dark:bg-slate-800'
+                                i === currentStep ? 'bg-cyan-500' :
+                                i < currentStep ? 'bg-cyan-200 dark:bg-cyan-500/30' : 'bg-slate-200 dark:bg-slate-800'
                             }`} />
                         ))}
                     </div>
                 </div>
 
                 {/* AI Badge */}
-                <div className="flex items-center gap-2 mb-4 text-sm text-sky-600 dark:text-sky-400 font-medium">
-                    <div className="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-500/20 flex items-center justify-center">
+                <div className="flex items-center gap-2 mb-4 text-sm text-cyan-600 dark:text-cyan-400 font-medium">
+                    <div className="w-6 h-6 rounded-lg bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center">
                         <BrainCircuit className="w-4 h-4" />
                     </div>
                     <span>AI-generated quiz — <span className="font-bold">{topic}</span></span>
@@ -241,21 +296,22 @@ export default function QuizShow() {
                         <div className="space-y-4">
                             {question.options.map((opt, i) => {
                                 const isSelected = currentAnswer === i;
+
                                 return (
                                     <button
                                         key={i}
                                         onClick={() => handleSelectOption(i)}
                                         className={`w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group ${
                                             isSelected
-                                            ? 'border-sky-500 bg-sky-50 dark:bg-sky-500/10'
-                                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 hover:border-sky-300 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800'
+                                            ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-500/10'
+                                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 hover:border-cyan-300 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800'
                                         }`}
                                     >
-                                        <span className={`font-medium text-lg transition-colors ${isSelected ? 'text-sky-600 dark:text-sky-400' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
+                                        <span className={`font-medium text-lg transition-colors ${isSelected ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
                                             {opt}
                                         </span>
                                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                            isSelected ? 'border-sky-500 bg-sky-500' : 'border-slate-300 dark:border-slate-700'
+                                            isSelected ? 'border-cyan-500 bg-cyan-500' : 'border-slate-300 dark:border-slate-700'
                                         }`}>
                                             {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                                         </div>
@@ -267,15 +323,15 @@ export default function QuizShow() {
                         <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end">
                             <button
                                 onClick={handleNext}
-                                disabled={!canProceed}
+                                disabled={!canProceed || submitting}
                                 className={`flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all ${
-                                    canProceed
-                                    ? 'bg-sky-600 hover:bg-sky-500 text-white shadow-lg shadow-sky-500/20 hover:scale-105'
+                                    canProceed && !submitting
+                                    ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/20 hover:scale-105'
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
                                 }`}
                             >
-                                {isLast ? t('quiz.submit') : t('quiz.next')}
-                                <ChevronRight className="w-5 h-5" />
+                                {submitting ? 'Submitting...' : isLast ? t('quiz.submit') : t('quiz.next')}
+                                {!submitting && <ChevronRight className="w-5 h-5" />}
                             </button>
                         </div>
                     </motion.div>

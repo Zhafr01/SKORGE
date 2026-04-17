@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import AppLayout from '@/components/skorge/AppLayout';
-import { Briefcase, MapPin, DollarSign, ExternalLink, Search, Sparkles, Building2, Clock, CheckCircle2, X, Bookmark, BookmarkCheck } from 'lucide-react';
-import { DialCarouselLayout } from '@/components/skorge/DialCarouselLayout';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useTranslation } from '@/lib/i18n';
+import { Briefcase, MapPin, DollarSign, ExternalLink, Search, Sparkles, Building2, Clock, CheckCircle2, X, Bookmark, BookmarkCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import AppLayout from '@/components/skorge/AppLayout';
+import { DialCarouselLayout } from '@/components/skorge/DialCarouselLayout';
 import { useAuth } from '@/lib/auth';
+import { useTranslation } from '@/lib/i18n';
 
 
 const DUMMY_JOBS = [
@@ -129,15 +129,31 @@ export default function JobBoardIndex() {
 
                 const scored = DUMMY_JOBS.map((job) => {
                     let matchScore = 0;
+
                     if (userSkills.length > 0) {
                         const overlap = job.skills.filter(s => userSkills.includes(s));
                         matchScore = Math.floor((overlap.length / job.skills.length) * 100);
-                        if (matchScore === 0 && interest.includes('engineering') && job.title.toLowerCase().includes('developer')) matchScore = 60;
-                        if (matchScore === 0 && interest.includes('design') && job.title.toLowerCase().includes('design')) matchScore = 60;
+
+                        if (matchScore === 0 && interest.includes('engineering') && job.title.toLowerCase().includes('developer')) {
+matchScore = 60;
+}
+
+                        if (matchScore === 0 && interest.includes('design') && job.title.toLowerCase().includes('design')) {
+matchScore = 60;
+}
                     }
-                    if (matchScore > 0 && matchScore < 50) matchScore += 30; // bump it up so some show as high match
-                    if (matchScore > 100) matchScore = 100;
-                    if (userSkills.length > 0 && matchScore === 0) matchScore = Math.floor(Math.random() * 40) + 20;
+
+                    if (matchScore > 0 && matchScore < 50) {
+matchScore += 30;
+} // bump it up so some show as high match
+
+                    if (matchScore > 100) {
+matchScore = 100;
+}
+
+                    if (userSkills.length > 0 && matchScore === 0) {
+matchScore = Math.floor(Math.random() * 40) + 20;
+}
 
                     return { ...job, matchScore };
                 }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
@@ -166,6 +182,7 @@ export default function JobBoardIndex() {
         if (job.url !== '#') {
             window.open(job.url, '_blank', 'noopener,noreferrer');
         }
+
         const updated = [...new Set([...appliedJobIds, job.id])];
         setAppliedJobIds(updated);
         localStorage.setItem('skorge_applied_jobs', JSON.stringify(updated));
@@ -174,11 +191,13 @@ export default function JobBoardIndex() {
 
     const handleSaveJob = (job: Job) => {
         let updated: number[];
+
         if (savedJobIds.includes(job.id)) {
             updated = savedJobIds.filter((id) => id !== job.id);
         } else {
             updated = [...savedJobIds, job.id];
         }
+
         setSavedJobIds(updated);
         localStorage.setItem('skorge_saved_jobs', JSON.stringify(updated));
     };
@@ -209,7 +228,7 @@ export default function JobBoardIndex() {
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-600 dark:text-slate-400 mb-6">
-                            <div className="flex items-center gap-1.5 bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg backdrop-blur-sm"><MapPin className="w-4 h-4 text-sky-500" /> {item.location}</div>
+                            <div className="flex items-center gap-1.5 bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg backdrop-blur-sm"><MapPin className="w-4 h-4 text-cyan-500" /> {item.location}</div>
                             <div className="flex items-center gap-1.5 bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg backdrop-blur-sm"><Clock className="w-4 h-4 text-purple-500" /> {item.type}</div>
                             <div className="flex items-center gap-1.5 bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg backdrop-blur-sm"><DollarSign className="w-4 h-4 text-emerald-500" /> {item.salary}</div>
                         </div>
@@ -263,9 +282,9 @@ export default function JobBoardIndex() {
             <div className="flex justify-end mb-4">
                 <button 
                     onClick={() => setViewMode('dial')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-slate-800 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm hover:border-sky-500 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-slate-800 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm hover:border-cyan-500 transition-colors"
                 >
-                    <Briefcase className="w-4 h-4 text-sky-500" /> Switch to Dial View
+                    <Briefcase className="w-4 h-4 text-cyan-500" /> Switch to Dial View
                 </button>
             </div>
             
@@ -279,7 +298,7 @@ export default function JobBoardIndex() {
                         transition={{ duration: 0.8, type: "spring" }}
                         className="relative p-2 bg-white/40 dark:bg-[rgba(11,17,32,0.6)] backdrop-blur-xl border border-white/60 dark:border-white/10 rounded-[2rem] shadow-xl"
                     >
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 dark:text-sky-300" />
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 dark:text-cyan-300" />
                         <input
                             type="text"
                             placeholder={t('jobs.searchPlaceholder', { defaultValue: 'Search roles, companies, keywords...' })}
@@ -306,9 +325,9 @@ export default function JobBoardIndex() {
                                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                     viewport={{ once: true, margin: "-20px" }}
                                     transition={{ duration: 0.6, delay: idx * 0.1, type: "spring" }}
-                                    className="bg-white/60 dark:bg-[rgba(11,17,32,0.6)] backdrop-blur-xl border border-white/60 dark:border-white/5 rounded-3xl p-6 hover:border-sky-400/50 dark:hover:border-sky-500/40 hover:shadow-[0_10px_30px_rgba(14,165,233,0.15)] transition-all group flex flex-col sm:flex-row gap-6 items-start sm:items-center relative overflow-hidden"
+                                    className="bg-white/60 dark:bg-[rgba(11,17,32,0.6)] backdrop-blur-xl border border-white/60 dark:border-white/5 rounded-3xl p-6 hover:border-cyan-400/50 dark:hover:border-cyan-500/40 hover:shadow-[0_10px_30px_rgba(14,165,233,0.15)] transition-all group flex flex-col sm:flex-row gap-6 items-start sm:items-center relative overflow-hidden"
                                 >
-                                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-sky-400/10 to-teal-500/10 rounded-full blur-[30px] group-hover:scale-150 transition-all duration-700 pointer-events-none"></div>
+                                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-cyan-400/10 to-teal-500/10 rounded-full blur-[30px] group-hover:scale-150 transition-all duration-700 pointer-events-none"></div>
 
                                     <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${job.logo} flex items-center justify-center shrink-0 shadow-lg relative z-10`}>
                                         <Building2 className="w-8 h-8 text-white opacity-90 shadow-sm" />
@@ -316,14 +335,14 @@ export default function JobBoardIndex() {
 
                                     <div className="flex-1 relative z-10">
                                         <div className="flex flex-wrap items-center gap-3 mb-2">
-                                            <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors drop-shadow-sm">{job.title}</h3>
+                                            <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors drop-shadow-sm">{job.title}</h3>
                                             {(job.matchScore ?? 0) >= 85 && (
                                                 <span className="flex items-center gap-1 px-3 py-1 text-[10px] uppercase tracking-wider font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-500/20 backdrop-blur-md border border-emerald-300/50 dark:border-emerald-500/30 rounded-lg shadow-sm">
                                                     <Sparkles className="w-3 h-3" /> {t('jobs.highMatch')} ({job.matchScore}%)
                                                 </span>
                                             )}
                                             {appliedJobIds.includes(job.id) && (
-                                                <span className="flex items-center gap-1 px-3 py-1 text-[10px] uppercase tracking-wider font-bold text-sky-700 dark:text-sky-300 bg-sky-100/80 dark:bg-sky-500/20 backdrop-blur-md border border-sky-300/50 dark:border-sky-500/30 rounded-lg shadow-sm">
+                                                <span className="flex items-center gap-1 px-3 py-1 text-[10px] uppercase tracking-wider font-bold text-cyan-700 dark:text-cyan-300 bg-cyan-100/80 dark:bg-cyan-500/20 backdrop-blur-md border border-cyan-300/50 dark:border-cyan-500/30 rounded-lg shadow-sm">
                                                     <CheckCircle2 className="w-3 h-3" /> {t('jobs.applied')}
                                                 </span>
                                             )}
@@ -331,7 +350,7 @@ export default function JobBoardIndex() {
                                         <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-4">{job.company}</p>
 
                                         <div className="flex flex-wrap items-center gap-5 text-xs font-bold text-slate-600 dark:text-slate-400 mb-4">
-                                            <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-sky-500" /> {job.location}</div>
+                                            <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-cyan-500" /> {job.location}</div>
                                             <div className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-purple-500" /> {job.type}</div>
                                             <div className="flex items-center gap-1.5"><DollarSign className="w-4 h-4 text-emerald-500" /> {job.salary}</div>
                                         </div>
@@ -352,7 +371,7 @@ export default function JobBoardIndex() {
                                             className={`flex-1 sm:w-auto px-6 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg ${
                                                 appliedJobIds.includes(job.id)
                                                     ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700'
-                                                    : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white border border-transparent shadow-sky-500/30 hover:scale-105'
+                                                    : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white border border-transparent shadow-cyan-500/30 hover:scale-105'
                                             }`}
                                         >
                                             {appliedJobIds.includes(job.id) ? t('jobs.applied') : <><ExternalLink className="w-4 h-4" /> {t('jobs.apply')}</>}
@@ -378,17 +397,17 @@ export default function JobBoardIndex() {
                 {/* Sidebar Metrics */}
                 <div className="w-full lg:w-1/3 space-y-6">
                     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl" />
                         <h3 className="font-bold text-slate-800 dark:text-white mb-4 text-lg">{t('jobs.profileTitle')}</h3>
 
                         <div className="space-y-4">
                             <div>
                                 <div className="flex justify-between text-sm mb-1">
                                     <span className="text-slate-600 dark:text-slate-400 font-medium">{t('jobs.completeness')}</span>
-                                    <span className="text-sky-600 dark:text-sky-400 font-bold">85%</span>
+                                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">85%</span>
                                 </div>
                                 <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 w-full overflow-hidden">
-                                    <div className="h-full bg-sky-500 w-[85%] rounded-full" />
+                                    <div className="h-full bg-cyan-500 w-[85%] rounded-full" />
                                 </div>
                             </div>
 
@@ -409,15 +428,15 @@ export default function JobBoardIndex() {
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-sky-50 dark:from-sky-900/40 to-orange-50 dark:to-orange-900/40 border border-sky-200 dark:border-sky-500/20 rounded-3xl p-6">
-                        <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/20 flex items-center justify-center mb-4">
-                            <Sparkles className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+                    <div className="bg-gradient-to-br from-cyan-50 dark:from-cyan-900/40 to-orange-50 dark:to-orange-900/40 border border-cyan-200 dark:border-cyan-500/20 rounded-3xl p-6">
+                        <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center mb-4">
+                            <Sparkles className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                         </div>
                         <h4 className="font-bold text-slate-800 dark:text-white mb-2">{t('jobs.increaseMatch')}</h4>
                         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
                             {t('jobs.coursePitch', { defaultValue: 'Completing the "Advanced React Patterns" module will instantly qualify you for 15+ more roles in our network.' })}
                         </p>
-                        <Link to="/courses/5" className="text-sky-600 dark:text-sky-400 font-bold text-sm hover:underline flex items-center gap-1">
+                        <Link to="/courses/5" className="text-cyan-600 dark:text-cyan-400 font-bold text-sm hover:underline flex items-center gap-1">
                             {t('jobs.goToCourse')} <ExternalLink className="w-3 h-3" />
                         </Link>
                     </div>
@@ -431,7 +450,7 @@ export default function JobBoardIndex() {
                         <div className="flex items-start justify-between mb-6">
                             <div>
                                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1">{applyJob.title}</h3>
-                                <p className="text-sky-600 dark:text-sky-400 font-semibold text-sm">{applyJob.company}</p>
+                                <p className="text-cyan-600 dark:text-cyan-400 font-semibold text-sm">{applyJob.company}</p>
                             </div>
                             <button onClick={() => setApplyJob(null)} className="text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
                                 <X className="w-5 h-5" />
@@ -455,14 +474,16 @@ export default function JobBoardIndex() {
                         ) : (
                             <button
                                 onClick={() => handleConfirmApply(applyJob)}
-                                className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+                                className="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
                             >
                                 <ExternalLink className="w-4 h-4" /> {t('jobs.applyOnSite')}
                             </button>
                         )}
 
                         <button
-                            onClick={() => { handleSaveJob(applyJob); setApplyJob(null); }}
+                            onClick={() => {
+ handleSaveJob(applyJob); setApplyJob(null); 
+}}
                             className="w-full mt-3 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold transition-all text-sm border border-slate-200 dark:border-slate-700"
                         >
                             {savedJobIds.includes(applyJob.id) ? t('jobs.alreadySaved') : t('jobs.saveForLater')}

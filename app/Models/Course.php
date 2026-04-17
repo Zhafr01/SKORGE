@@ -12,10 +12,15 @@ class Course extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $appends = ['thumbnail'];
 
     public function getThumbnailAttribute(): string
     {
+        $rawValue = $this->attributes['thumbnail'] ?? null;
+
+        if (! empty($rawValue)) {
+            return str_starts_with($rawValue, 'http') ? $rawValue : url($rawValue);
+        }
+
         return match ($this->field) {
             'Design' => '/thumbnails/design.png',
             'Data' => '/thumbnails/data.png',

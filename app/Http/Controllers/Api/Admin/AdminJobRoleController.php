@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\JobRole;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,12 @@ class AdminJobRoleController extends Controller
 
         $jobRoles = JobRole::query()
             ->withCount('courses')
-            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+            ->when($search, function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('courses', function ($qc) use ($search) {
+                        $qc->where('title', 'like', "%{$search}%");
+                    });
+            })
             ->orderBy('name')
             ->paginate(20);
 
@@ -51,15 +57,32 @@ class AdminJobRoleController extends Controller
             'description' => 'nullable|string',
             'icon' => 'nullable|string|max:100',
             'category' => 'sometimes|string|max:100',
+            'courses_sync' => 'sometimes|array',
+            'courses_sync.*' => 'exists:courses,id',
         ]);
 
         if (isset($validated['name'])) {
             $validated['slug'] = Str::slug($validated['name']);
         }
 
+        $coursesSync = $validated['courses_sync'] ?? null;
+        unset($validated['courses_sync']);
+
         $jobRole->update($validated);
 
-        return response()->json(['data' => $jobRole->fresh(), 'message' => 'Job role updated successfully.']);
+        if ($coursesSync !== null) {
+            if (empty($coursesSync)) {
+                Course::where('job_role_id', $jobRole->id)->update(['job_role_id' => null]);
+            } else {
+                Course::where('job_role_id', $jobRole->id)
+                    ->whereNotIn('id', $coursesSync)
+                    ->update(['job_role_id' => null]);
+
+                Course::whereIn('id', $coursesSync)->update(['job_role_id' => $jobRole->id]);
+            }
+        }
+
+        return response()->json(['data' => $jobRole->fresh()->load('courses'), 'message' => 'Job role updated successfully.']);
     }
 
     public function destroy(JobRole $jobRole): JsonResponse

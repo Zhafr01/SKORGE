@@ -3,32 +3,35 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '../css/app.css';
 
-import { AuthProvider } from './lib/auth';
-import { ThemeProvider } from './lib/theme';
-import { I18nProvider } from './lib/i18n';
+import IntroOverlay from './components/skorge/IntroOverlay';
 import PrivateRoute from './components/skorge/PrivateRoute';
-import Welcome from './pages/welcome';
-import Dashboard from './pages/dashboard';
+import { AuthProvider } from './lib/auth';
+import { I18nProvider } from './lib/i18n';
+import { ThemeProvider } from './lib/theme';
+import About from './pages/about';
+import AdminDashboard from './pages/admin/index';
+import AdminUsers from './pages/admin/users';
+import AdminCourses from './pages/admin/courses';
+import AdminJobRoles from './pages/admin/job-roles';
+import AdminSystem from './pages/admin/system';
+import Login from './pages/auth/login';
+import Register from './pages/auth/register';
+import CourseIndex from './pages/courses/index';
 import JobRoleIndex from './pages/job-roles/index';
 import JobRoleShow from './pages/job-roles/show';
-import CourseIndex from './pages/courses/index';
 import CourseShow from './pages/courses/show';
+import JobBoardIndex from './pages/jobs/index';
 import QuizShow from './pages/quiz/show';
 import CertificatesIndex from './pages/user/certificates';
 import MyCoursesIndex from './pages/user/my-courses';
 import CVBuilder from './pages/user/cv-builder';
-import JobBoardIndex from './pages/jobs/index';
-import Login from './pages/auth/login';
-import Register from './pages/auth/register';
-import About from './pages/about';
 import AIOnboarding from './pages/onboarding';
 import UserProfile from './pages/user/profile';
 
 import RecommendationWizard from './pages/job-roles/recommendation';
 import StatsIndex from './pages/stats/index';
-import IntroOverlay from './components/skorge/IntroOverlay';
-import AdminDashboard from './pages/admin/index';
-import AdminUsers from './pages/admin/users';
+import Dashboard from './pages/dashboard';
+import Welcome from './pages/welcome';
 
 createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
@@ -62,6 +65,9 @@ createRoot(document.getElementById('root')!).render(
                             {/* Admin routes */}
                             <Route path="/admin" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
                             <Route path="/admin/users" element={<PrivateRoute><AdminUsers /></PrivateRoute>} />
+                            <Route path="/admin/courses" element={<PrivateRoute><AdminCourses /></PrivateRoute>} />
+                            <Route path="/admin/job-roles" element={<PrivateRoute><AdminJobRoles /></PrivateRoute>} />
+                            <Route path="/admin/system" element={<PrivateRoute><AdminSystem /></PrivateRoute>} />
                         </Routes>
                     </AuthProvider>
                 </I18nProvider>

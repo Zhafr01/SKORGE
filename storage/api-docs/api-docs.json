@@ -71,6 +71,55 @@
                 }
             }
         },
+        "/api/ai/describe-github": {
+            "post": {
+                "tags": [
+                    "AI Features"
+                ],
+                "summary": "Generate a description for a GitHub project",
+                "description": "Generates a project name and professional description based on a GitHub link.",
+                "operationId": "describeGithubProject",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "link"
+                                ],
+                                "properties": {
+                                    "link": {
+                                        "type": "string",
+                                        "example": "github.com/user/repo"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/ai/match-jobs": {
             "post": {
                 "tags": [
@@ -259,6 +308,20 @@
                 ],
                 "summary": "Get list of job roles",
                 "operationId": "getJobRoles",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/stats/submit-quiz": {
+            "post": {
+                "tags": [
+                    "Gamification Stats"
+                ],
+                "summary": "Submit quiz and earn XP",
+                "operationId": "submitQuiz",
                 "responses": {
                     "200": {
                         "description": "Successful operation"

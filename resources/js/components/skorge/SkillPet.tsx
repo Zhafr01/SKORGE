@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { Sparkles, ArrowUpCircle, PenSquare, Heart, Check } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
+import React, { useState, useEffect } from 'react';
 import api from '@/lib/api';
+import { useTranslation } from '@/lib/i18n';
 
 interface SkillPetProps {
     xp: number;
@@ -25,9 +25,13 @@ export default function SkillPet({ xp, user, careerCategory, globalRank }: Skill
     const isHappy = streak >= 7;
 
     const isLongAbsent = (() => {
-        if (!user?.last_active_at) return false;
+        if (!user?.last_active_at) {
+return false;
+}
+
         const lastActive = new Date(user.last_active_at);
         const diffDays = (Date.now() - lastActive.getTime()) / (1000 * 60 * 60 * 24);
+
         return diffDays >= 7;
     })();
 
@@ -36,10 +40,21 @@ export default function SkillPet({ xp, user, careerCategory, globalRank }: Skill
     const isGolden = globalRank && rankNum <= 5 && rankNum > 2;
 
     const getStageInfo = (currentXp: number) => {
-        if (currentXp < 500) return { stage: 1, defaultName: 'Spark', title: 'Rookie Spark', nextXp: 500, img: '/pet level 1.png', acc: { x: '50%', y: '45%', scale: 1 } };
-        if (currentXp < 2000) return { stage: 2, defaultName: 'Nova', title: 'Growing Learner', nextXp: 2000, img: '/pet level 2.png', acc: { x: '45%', y: '30%', scale: 1.1 } };
-        if (currentXp < 6000) return { stage: 3, defaultName: 'Volt', title: 'Skill Hunter', nextXp: 6000, img: '/pet level 3.png', acc: { x: '60%', y: '35%', scale: 1.2 } };
-        if (currentXp < 15000) return { stage: 4, defaultName: 'Astra', title: 'Career Beast', nextXp: 15000, img: '/pet level 4.png', acc: { x: '50%', y: '30%', scale: 1.3 } };
+        if (currentXp < 500) {
+return { stage: 1, defaultName: 'Spark', title: 'Rookie Spark', nextXp: 500, img: '/pet level 1.png', acc: { x: '50%', y: '45%', scale: 1 } };
+}
+
+        if (currentXp < 2000) {
+return { stage: 2, defaultName: 'Nova', title: 'Growing Learner', nextXp: 2000, img: '/pet level 2.png', acc: { x: '45%', y: '30%', scale: 1.1 } };
+}
+
+        if (currentXp < 6000) {
+return { stage: 3, defaultName: 'Volt', title: 'Skill Hunter', nextXp: 6000, img: '/pet level 3.png', acc: { x: '60%', y: '35%', scale: 1.2 } };
+}
+
+        if (currentXp < 15000) {
+return { stage: 4, defaultName: 'Astra', title: 'Career Beast', nextXp: 15000, img: '/pet level 4.png', acc: { x: '50%', y: '30%', scale: 1.3 } };
+}
         
         return { 
             stage: 5, 
@@ -55,8 +70,13 @@ export default function SkillPet({ xp, user, careerCategory, globalRank }: Skill
     const currentActualInfo = getStageInfo(xp);
 
     useEffect(() => {
-        if (displayStage === 0) setDisplayStage(currentActualInfo.stage);
-        if (user?.pet_name) setPetName(user.pet_name);
+        if (displayStage === 0) {
+setDisplayStage(currentActualInfo.stage);
+}
+
+        if (user?.pet_name) {
+setPetName(user.pet_name);
+}
     }, [xp, user]);
 
     const displayBaseXp = displayStage === 1 ? 0 :
@@ -76,30 +96,46 @@ export default function SkillPet({ xp, user, careerCategory, globalRank }: Skill
     };
 
     let progress = 0;
-    if (displayStage >= 5 || pendingEvolution) progress = 100;
-    else progress = Math.min(100, Math.max(0, ((xp - displayBaseXp) / (activeInfo.nextXp - displayBaseXp)) * 100));
+
+    if (displayStage >= 5 || pendingEvolution) {
+progress = 100;
+} else {
+progress = Math.min(100, Math.max(0, ((xp - displayBaseXp) / (activeInfo.nextXp - displayBaseXp)) * 100));
+}
 
     // Dynamic Theme (Light + Dark compatible)
     const getTheme = () => {
-        if (isPhantom) return { bg: 'bg-white dark:bg-slate-950', border: 'border-purple-200 dark:border-purple-900/50', bar: 'from-gray-400 to-purple-400 dark:from-gray-500 dark:to-purple-400', text: 'text-purple-600 dark:text-purple-400', glow: 'from-purple-300/40 dark:from-purple-600/40' };
-        if (isGolden) return { bg: 'bg-amber-50 dark:bg-amber-950', border: 'border-amber-200 dark:border-amber-700/50', bar: 'from-yellow-400 to-amber-300 dark:from-yellow-400 dark:to-amber-200', text: 'text-amber-600 dark:text-yellow-400', glow: 'from-amber-200/50 dark:from-amber-500/40' };
+        if (isPhantom) {
+return { bg: 'bg-white dark:bg-slate-950', border: 'border-purple-200 dark:border-purple-900/50', bar: 'from-gray-400 to-purple-400 dark:from-gray-500 dark:to-purple-400', text: 'text-purple-600 dark:text-purple-400', glow: 'from-purple-300/40 dark:from-purple-600/40' };
+}
+
+        if (isGolden) {
+return { bg: 'bg-amber-50 dark:bg-amber-950', border: 'border-amber-200 dark:border-amber-700/50', bar: 'from-yellow-400 to-amber-300 dark:from-yellow-400 dark:to-amber-200', text: 'text-amber-600 dark:text-yellow-400', glow: 'from-amber-200/50 dark:from-amber-500/40' };
+}
         
         switch(careerCategory) {
             case 'Engineering': return { bg: 'bg-white dark:bg-slate-950', border: 'border-cyan-200 dark:border-cyan-900/40', bar: 'from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-500', text: 'text-cyan-600 dark:text-cyan-400', glow: 'from-cyan-300/30 dark:from-cyan-500/30' };
             case 'Design': return { bg: 'bg-white dark:bg-slate-950', border: 'border-pink-200 dark:border-pink-900/40', bar: 'from-pink-400 to-purple-500 dark:from-pink-500 dark:to-purple-500', text: 'text-pink-600 dark:text-pink-400', glow: 'from-pink-300/30 dark:from-pink-500/30' };
             case 'Data': return { bg: 'bg-white dark:bg-slate-950', border: 'border-teal-200 dark:border-teal-900/40', bar: 'from-emerald-400 to-teal-400 dark:from-emerald-500 dark:to-teal-400', text: 'text-emerald-700 dark:text-emerald-400', glow: 'from-emerald-300/30 dark:from-emerald-500/30' };
             case 'Business': return { bg: 'bg-white dark:bg-slate-950', border: 'border-orange-200 dark:border-orange-900/40', bar: 'from-amber-400 to-orange-400 dark:from-amber-500 dark:to-orange-500', text: 'text-amber-700 dark:text-amber-400', glow: 'from-amber-300/30 dark:from-amber-500/30' };
-            default: return { bg: 'bg-slate-50 dark:bg-slate-950', border: 'border-sky-200 dark:border-sky-900/40', bar: 'from-sky-400 to-sky-600 dark:from-sky-500 dark:to-sky-700', text: 'text-sky-600 dark:text-sky-400', glow: 'from-sky-300/30 dark:from-sky-500/30' };
+            default: return { bg: 'bg-slate-50 dark:bg-slate-950', border: 'border-cyan-200 dark:border-cyan-900/40', bar: 'from-cyan-400 to-cyan-600 dark:from-cyan-500 dark:to-cyan-700', text: 'text-cyan-600 dark:text-cyan-400', glow: 'from-cyan-300/30 dark:from-cyan-500/30' };
         }
     };
     const theme = getTheme();
 
     let petFilterClass = '';
-    if (isPhantom) petFilterClass = 'invert hue-rotate-180 brightness-150 saturate-200';
-    else if (isGolden) petFilterClass = 'sepia saturate-200 hue-rotate-[-15deg] brightness-125 contrast-125 drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]';
+
+    if (isPhantom) {
+petFilterClass = 'invert hue-rotate-180 brightness-150 saturate-200';
+} else if (isGolden) {
+petFilterClass = 'sepia saturate-200 hue-rotate-[-15deg] brightness-125 contrast-125 drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]';
+}
 
     const handlePetClick = () => {
-        if (isPetting || isEvolving) return;
+        if (isPetting || isEvolving) {
+return;
+}
+
         setIsPetting(true);
         setTimeout(() => setIsPetting(false), 1500);
     };
@@ -112,16 +148,46 @@ export default function SkillPet({ xp, user, careerCategory, globalRank }: Skill
     const displayName = petName || activeInfo.defaultName;
 
     const getPetMessage = () => {
-        if (isEvolving) return "Wah, aku berevolusi! ✨";
-        if (pendingEvolution) return "Kekuatanku penuh! Ayo evolusi! 🌟";
-        if (isPetting) return "Hehe, geli! ❤️";
-        if (isLongAbsent) return "Aku merindukanmu! Sudah lama tidak belajar... 😢";
-        if (isSleepy) return "Aku menunggumu kembali belajar... 💤";
-        if (isHappy) return `Luar biasa! Streak ${streak} hari! 🔥`;
-        if (activeInfo.stage === 1) return "Ayo belajar! 1 langkah lagi.";
-        if (activeInfo.stage === 2) return "Skill baru hampir terbuka!";
-        if (activeInfo.stage === 4) return "Selesaikan 1 video hari ini! 🎯";
-        if (activeInfo.stage === 5) return "Kamu adalah legenda UpSkills!";
+        if (isEvolving) {
+return "Wah, aku berevolusi! ✨";
+}
+
+        if (pendingEvolution) {
+return "Kekuatanku penuh! Ayo evolusi! 🌟";
+}
+
+        if (isPetting) {
+return "Hehe, geli! ❤️";
+}
+
+        if (isLongAbsent) {
+return "Aku merindukanmu! Sudah lama tidak belajar... 😢";
+}
+
+        if (isSleepy) {
+return "Aku menunggumu kembali belajar... 💤";
+}
+
+        if (isHappy) {
+return `Luar biasa! Streak ${streak} hari! 🔥`;
+}
+
+        if (activeInfo.stage === 1) {
+return "Ayo belajar! 1 langkah lagi.";
+}
+
+        if (activeInfo.stage === 2) {
+return "Skill baru hampir terbuka!";
+}
+
+        if (activeInfo.stage === 4) {
+return "Selesaikan 1 video hari ini! 🎯";
+}
+
+        if (activeInfo.stage === 5) {
+return "Kamu adalah legenda UpSkills!";
+}
+
         return "Terus tingkatkan XP-mu!";
     };
 
@@ -194,7 +260,7 @@ export default function SkillPet({ xp, user, careerCategory, globalRank }: Skill
                                     type="text" 
                                     value={petName} 
                                     onChange={(e) => setPetName(e.target.value)}
-                                    className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center text-lg px-4 py-1 rounded-xl border border-slate-300 dark:border-slate-600 focus:outline-none focus:border-sky-500 w-32 md:w-40"
+                                    className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center text-lg px-4 py-1 rounded-xl border border-slate-300 dark:border-slate-600 focus:outline-none focus:border-cyan-500 w-32 md:w-40"
                                     placeholder="Name..."
                                     autoFocus
                                     onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}

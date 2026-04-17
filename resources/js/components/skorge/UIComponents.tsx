@@ -15,12 +15,12 @@ export function ProgressBar({ progress, className = '', showLabel = true }: Prog
             {showLabel && (
                 <div className="flex justify-between items-end mb-1.5">
                     <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Progress</span>
-                    <span className="text-xs font-bold text-sky-400">{clampedProgress}%</span>
+                    <span className="text-xs font-bold text-cyan-400">{clampedProgress}%</span>
                 </div>
             )}
             <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                 <div 
-                    className="h-full bg-gradient-to-r from-sky-500 to-orange-500 rounded-full transition-all duration-1000 ease-out relative"
+                    className="h-full bg-gradient-to-r from-cyan-500 to-orange-500 rounded-full transition-all duration-1000 ease-out relative"
                     style={{ width: `${clampedProgress}%` }}
                 >
                     <div className="absolute inset-0 bg-white/20 animate-pulse"></div>

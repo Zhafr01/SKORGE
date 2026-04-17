@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\QuizResult;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,6 +12,57 @@ use OpenApi\Attributes as OA;
 #[OA\Tag(name: 'Gamification Stats', description: 'API Endpoints for User Gamification, Leaderboards, and Rewards')]
 class StatsController extends Controller
 {
+    #[OA\Post(path: '/api/stats/submit-quiz', operationId: 'submitQuiz', summary: 'Submit quiz and earn XP', tags: ['Gamification Stats'])]
+    #[OA\Response(response: 200, description: 'Successful operation')]
+    public function submitQuiz(Request $request)
+    {
+        $request->validate([
+            'quiz_id' => 'nullable|integer',
+            'score' => 'required|integer|min:0',
+            'total_questions' => 'required|integer|min:1',
+            'answers' => 'nullable|array',
+        ]);
+
+        $user = $request->user();
+        $score = $request->input('score');
+        $total = $request->input('total_questions');
+        $passed = ($score / $total) >= 0.6; // 60% passing mark
+
+        $quizResult = QuizResult::create([
+            'user_id' => $user->id,
+            'quiz_id' => $request->input('quiz_id'),
+            'score' => $score,
+            'answers' => $request->input('answers'),
+            'passed' => $passed,
+        ]);
+
+        $xpEarned = 0;
+        $leveledUp = false;
+
+        if ($passed) {
+            $xpEarned = 50; // Award 50 XP for passing
+            $user->xp_points += 50;
+
+            while ($user->xp_points >= $user->level * 500) {
+                $user->level++;
+                $leveledUp = true;
+            }
+            $user->save();
+        }
+
+        return response()->json([
+            'message' => 'Quiz submitted successfully',
+            'data' => $quizResult,
+            'gamification' => [
+                'xp_earned' => $xpEarned,
+                'leveled_up' => $leveledUp,
+                'new_level' => $user->level,
+                'total_xp' => $user->xp_points,
+                'passed' => $passed,
+            ],
+        ]);
+    }
+
     #[OA\Post(path: '/api/user/heartbeat', operationId: 'heartbeat', summary: 'Track user active time and daily streak', tags: ['Gamification Stats'])]
     #[OA\Response(response: 200, description: 'Successful operation')]
     public function heartbeat(Request $request)
@@ -80,7 +132,7 @@ class StatsController extends Controller
         $totalUsers = max(User::count(), 1);
         $usersAhead = User::where('xp_points', '>', $xp)->count();
         $rankPercent = max(1, ceil((($usersAhead + 1) / $totalUsers) * 100));
-        
+
         $isPhantomPercent = $rankPercent <= 2;
         $isGoldenPercent = $rankPercent <= 5;
 

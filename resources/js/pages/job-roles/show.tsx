@@ -1,10 +1,10 @@
+import { Target, Zap, Briefcase, Award, CheckCircle2, ArrowRight, Terminal } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/skorge/AppLayout';
 import { CourseCard } from '@/components/skorge/CourseCard';
-import { Target, Zap, Briefcase, Award, CheckCircle2, ArrowRight, Terminal } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/lib/auth';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 
 const DUMMY_ROLE = {
     id: 1,
@@ -31,16 +31,23 @@ export default function JobRoleShow() {
     const [isStarting, setIsStarting] = useState(false);
 
     useEffect(() => {
-        if (!id) { return; }
+        if (!id) {
+ return; 
+}
+
         api.get(`/job-roles/${id}`)
             .then((res) => setRole(res.data))
             .catch(() => {});
         api.get(`/job-roles/${id}/courses`)
             .then((res) => {
                 const courses = res.data?.data ?? res.data;
-                if (Array.isArray(courses) && courses.length > 0) setPathCourses(courses);
+
+                if (Array.isArray(courses) && courses.length > 0) {
+setPathCourses(courses);
+}
             })
             .catch(() => {});
+
         if (isAuthenticated) {
             api.get(`/job-roles/${id}/learning-path`)
                 .then((res) => setIsEnrolled(!!res.data))
@@ -51,9 +58,12 @@ export default function JobRoleShow() {
     const handleStartPath = async () => {
         if (!isAuthenticated) {
             navigate('/login');
+
             return;
         }
+
         setIsStarting(true);
+
         try {
             await api.post('/learning-paths/start', { job_role_id: role.id });
             setIsEnrolled(true);
@@ -82,10 +92,10 @@ export default function JobRoleShow() {
                 <div className="lg:col-span-2 space-y-10">
                     {/* Header Card */}
                     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
                         <div className="flex items-center gap-3 mb-4">
-                            <span className="text-xs font-bold uppercase tracking-widest text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded">
+                            <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded">
                                 {role.category}
                             </span>
                         </div>
@@ -97,7 +107,7 @@ export default function JobRoleShow() {
                             <button
                                 onClick={handleStartPath}
                                 disabled={isStarting}
-                                className="h-12 px-8 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-60 text-white font-bold transition-all hover:scale-105 shadow-lg shadow-sky-500/20 flex items-center gap-2"
+                                className="h-12 px-8 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-60 text-white font-bold transition-all hover:scale-105 shadow-lg shadow-cyan-500/20 flex items-center gap-2"
                             >
                                 <Target className="w-5 h-5" />
                                 {isStarting ? 'Starting...' : 'Start Learning Path'}
@@ -110,7 +120,7 @@ export default function JobRoleShow() {
                                 </div>
                                 <button
                                     onClick={() => pathCourses[0] && navigate(`/courses/${pathCourses[0].id}`)}
-                                    className="h-12 px-6 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 font-bold transition-colors flex items-center gap-2"
+                                    className="h-12 px-6 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-bold transition-colors flex items-center gap-2"
                                 >
                                     Continue <ArrowRight className="w-4 h-4" />
                                 </button>
@@ -121,7 +131,7 @@ export default function JobRoleShow() {
                     {/* Learning Path Courses */}
                     <div>
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400">
+                            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400">
                                 <Zap className="w-5 h-5" />
                             </div>
                             <h2 className="text-2xl font-bold text-white">The Learning Journey</h2>
@@ -130,10 +140,11 @@ export default function JobRoleShow() {
                         <div className="relative border-l-2 border-slate-800 ml-5 space-y-8 pb-4">
                             {pathCourses.map((course: any, idx: number) => {
                                 const status = !isEnrolled ? 'locked' : idx === 0 ? 'completed' : idx === 1 ? 'unlocked' : 'locked';
+
                                 return (
                                     <div key={course.id} className="relative pl-8">
                                         <div className={`absolute -left-[11px] top-4 w-5 h-5 rounded-full border-4 border-slate-950 ${
-                                            status === 'completed' ? 'bg-emerald-500' : status === 'unlocked' ? 'bg-sky-500' : 'bg-slate-700'
+                                            status === 'completed' ? 'bg-emerald-500' : status === 'unlocked' ? 'bg-cyan-500' : 'bg-slate-700'
                                         }`} />
                                         <CourseCard
                                             course={course}
@@ -147,15 +158,15 @@ export default function JobRoleShow() {
 
                             {/* Project Work Simulation */}
                             <div className="relative pl-8 mt-4 pb-4">
-                                <div className="absolute -left-[11px] top-6 w-5 h-5 rounded border-2 border-slate-950 bg-sky-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] flex items-center justify-center">
+                                <div className="absolute -left-[11px] top-6 w-5 h-5 rounded border-2 border-slate-950 bg-cyan-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] flex items-center justify-center">
                                     <Terminal className="w-3 h-3 text-white" />
                                 </div>
                                 <div className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-2xl group-hover:bg-sky-500/10 transition-colors" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/10 transition-colors" />
                                     <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                         <div>
                                             <div className="flex items-center gap-2 mb-2">
-                                                <span className="text-[10px] uppercase tracking-widest font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Work Simulation</span>
+                                                <span className="text-[10px] uppercase tracking-widest font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">Work Simulation</span>
                                             </div>
                                             <h3 className="text-xl font-bold text-white mb-2">Build an E-Commerce Dashboard</h3>
                                             <p className="text-sm text-slate-400 max-w-lg mb-3">Experience a realistic 3-day sprint. You'll receive a Figma design file, an API spec from the imaginary backend team, and a deadline to deliver the working React SPA.</p>
@@ -169,7 +180,7 @@ export default function JobRoleShow() {
                                             disabled={!isEnrolled}
                                             className={`whitespace-nowrap px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 ${
                                                 isEnrolled
-                                                    ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-sky-500/30 hover:scale-105'
+                                                    ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-cyan-500/30 hover:scale-105'
                                                     : 'bg-slate-800/50 text-slate-600 border border-slate-800 cursor-not-allowed'
                                             }`}
                                         >
@@ -226,14 +237,14 @@ export default function JobRoleShow() {
                         <h3 className="text-lg font-bold text-white mb-4">Target Skills</h3>
                         <div className="flex flex-wrap gap-2">
                             {['React', 'TypeScript', 'CSS/Tailwind', 'Git', 'API Integration', 'Performance', 'Testing'].map((skill, i) => (
-                                <span key={i} className="px-3 py-1.5 rounded-lg bg-slate-800 text-sm font-medium text-slate-300 border border-slate-700 hover:border-sky-500/40 transition-colors">
+                                <span key={i} className="px-3 py-1.5 rounded-lg bg-slate-800 text-sm font-medium text-slate-300 border border-slate-700 hover:border-cyan-500/40 transition-colors">
                                     {skill}
                                 </span>
                             ))}
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-sky-900/40 to-slate-900 border border-sky-500/20 rounded-2xl p-6 text-center">
+                    <div className="bg-gradient-to-br from-cyan-900/40 to-slate-900 border border-cyan-500/20 rounded-2xl p-6 text-center">
                         <div className="text-3xl font-black text-white mb-1">{pathCourses.length}</div>
                         <div className="text-sm text-slate-400 mb-1">Courses in this path</div>
                         <div className="text-xs text-slate-500">{totalMinutes} min total • Earn 1 certificate</div>

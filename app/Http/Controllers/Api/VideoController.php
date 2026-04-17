@@ -21,21 +21,49 @@ class VideoController extends Controller
     {
         $request->validate([
             'watched_percent' => 'required|integer|min:0|max:100',
+            'completed' => 'nullable|boolean',
         ]);
 
         $video = Video::findOrFail($id);
+        $user = $request->user();
 
-        $progress = VideoProgress::updateOrCreate(
-            ['user_id' => $request->user()->id, 'video_id' => $video->id],
-            [
-                'watched_percent' => $request->watched_percent,
-                'last_watched_at' => now(),
-            ]
-        );
+        $progress = VideoProgress::firstOrNew([
+            'user_id' => $user->id,
+            'video_id' => $video->id,
+        ]);
+
+        $progress->watched_percent = $request->watched_percent;
+        $progress->last_watched_at = now();
+
+        $completedNow = $request->input('completed', false) || $request->watched_percent >= 90;
+
+        $xpEarned = 0;
+        $leveledUp = false;
+
+        if ($completedNow && ! $progress->completed) {
+            $progress->completed = true;
+            // Grant XP for first time video completion
+            $user->xp_points += 10;
+            $xpEarned = 10;
+
+            while ($user->xp_points >= $user->level * 500) {
+                $user->level++;
+                $leveledUp = true;
+            }
+            $user->save();
+        }
+
+        $progress->save();
 
         return response()->json([
             'message' => 'Progress updated',
-            'data' => $progress,
+            'data' => clone $progress,
+            'gamification' => [
+                'xp_earned' => $xpEarned,
+                'leveled_up' => $leveledUp,
+                'new_level' => $user->level,
+                'total_xp' => $user->xp_points,
+            ],
         ]);
     }
 

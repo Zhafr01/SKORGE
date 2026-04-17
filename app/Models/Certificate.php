@@ -25,4 +25,9 @@ class Certificate extends Model
     {
         return $this->belongsTo(JobRole::class);
     }
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

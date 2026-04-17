@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutGrid, ArrowLeft, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 interface DialCarouselLayoutProps<T> {
     items: T[];
@@ -22,6 +22,7 @@ export function DialCarouselLayout<T>({
     subtitle = "Discover unique paths"
 }: DialCarouselLayoutProps<T>) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [direction, setDirection] = useState(1); // 1 for down/next, -1 for up/prev
     const isScrollingRef = useRef(false);
     const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +30,7 @@ export function DialCarouselLayout<T>({
     // Prevent background scrolling while in this view
     useEffect(() => {
         document.body.style.overflow = 'hidden';
+
         return () => {
             document.body.style.overflow = '';
         };
@@ -38,15 +40,19 @@ export function DialCarouselLayout<T>({
         e.preventDefault();
 
         // Use synchronous ref to prevent double-triggering during fast wheel spin
-        if (isScrollingRef.current) return;
+        if (isScrollingRef.current) {
+return;
+}
 
         // Lower threshold slightly for better responsiveness
         if (e.deltaY > 30) {
             // Scroll down -> next item
+            setDirection(1);
             setActiveIndex((prev) => Math.min(prev + 1, items.length - 1));
             lockScroll();
         } else if (e.deltaY < -30) {
             // Scroll up -> previous item
+            setDirection(-1);
             setActiveIndex((prev) => Math.max(prev - 1, 0));
             lockScroll();
         }
@@ -54,9 +60,13 @@ export function DialCarouselLayout<T>({
 
     useEffect(() => {
         const container = containerRef.current;
-        if (!container) return;
+
+        if (!container) {
+return;
+}
 
         container.addEventListener('wheel', handleWheel, { passive: false });
+
         return () => {
             container.removeEventListener('wheel', handleWheel);
         };
@@ -64,7 +74,11 @@ export function DialCarouselLayout<T>({
 
     const lockScroll = () => {
         isScrollingRef.current = true;
-        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+
+        if (scrollTimeout.current) {
+clearTimeout(scrollTimeout.current);
+}
+
         scrollTimeout.current = setTimeout(() => {
             isScrollingRef.current = false;
         }, 800); // Wait for animation to almost finish before allowing next scroll
@@ -74,19 +88,40 @@ export function DialCarouselLayout<T>({
     const STEP_ANGLE = 22; // Degrees between each item on the dial
     const CIRCLE_ROTATION = activeIndex * STEP_ANGLE;
 
+    const contentVariants = {
+        enter: (direction: number) => ({
+            opacity: 0,
+            x: direction > 0 ? -100 : 100,
+            filter: "blur(10px)",
+            scale: 0.9
+        }),
+        center: {
+            opacity: 1,
+            x: 0,
+            filter: "blur(0px)",
+            scale: 1
+        },
+        exit: (direction: number) => ({
+            opacity: 0,
+            x: direction > 0 ? 100 : -100,
+            filter: "blur(10px)",
+            scale: 0.9
+        })
+    };
+
     return (
-        <div 
+        <div
             ref={containerRef}
             className="fixed inset-0 top-0 left-0 w-screen h-screen z-50 bg-[#eef2f6] dark:bg-[#090e17] text-slate-900 dark:text-white flex overflow-hidden font-sans"
         >
             {/* Ambient Lighting Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] bg-sky-400/20 dark:bg-sky-600/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen opacity-70"></div>
+                <div className="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] bg-cyan-400/20 dark:bg-cyan-600/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen opacity-70"></div>
                 <div className="absolute top-[40%] right-[10%] w-[500px] h-[500px] bg-purple-400/20 dark:bg-fuchsia-600/15 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen opacity-50"></div>
             </div>
 
             {/* Top Bar for Toggle */}
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, type: "spring" }}
@@ -98,12 +133,12 @@ export function DialCarouselLayout<T>({
                 </div>
 
                 <div className="pointer-events-auto">
-                    <button 
+                    <button
                         onClick={onToggleView}
                         className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md px-6 py-3 rounded-full hover:bg-white dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700 shadow-xl"
                     >
                         <LayoutGrid className="w-5 h-5" />
-                        <span className="font-bold text-sm tracking-wide">Standard Grid</span>
+                        <span className="font-bold text-sm tracking-wide">All Item</span>
                     </button>
                 </div>
             </motion.div>
@@ -114,12 +149,14 @@ export function DialCarouselLayout<T>({
                 {/* Inner wrapper guarantees at least full height to allow vertical centering, but expands if content is taller */}
                 {/* Reduced padding to maximize available screen real estate */}
                 <div className="min-h-full w-full flex flex-col justify-center px-8 lg:px-16 lg:pl-20 pt-28 pb-32">
-                    <AnimatePresence mode="popLayout">
+                    <AnimatePresence mode="popLayout" custom={direction}>
                         <motion.div
                             key={`content-${activeIndex}`}
-                            initial={{ opacity: 0, x: -100, filter: "blur(10px)", scale: 0.9 }}
-                            animate={{ opacity: 1, x: 0, filter: "blur(0px)", scale: 1 }}
-                            exit={{ opacity: 0, x: 100, filter: "blur(10px)", scale: 0.9 }}
+                            custom={direction}
+                            variants={contentVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
                             transition={{ type: "spring", stiffness: 200, damping: 20 }}
                             className="w-full flex flex-col relative"
                         >
@@ -131,16 +168,20 @@ export function DialCarouselLayout<T>({
 
             {/* Arrow Navigation placed absolute at bottom left so they don't consume precious vertical space in the content flow */}
             <div className="absolute bottom-6 left-6 lg:bottom-10 lg:left-12 flex gap-3 z-[100]">
-                <button 
+                <button
                     disabled={activeIndex === 0}
-                    onClick={() => { setActiveIndex(p => Math.max(0, p - 1)); }}
+                    onClick={() => {
+ setDirection(-1); setActiveIndex(p => Math.max(0, p - 1)); 
+}}
                     className="w-12 h-12 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-xl border border-slate-200 dark:border-slate-700 pointer-events-auto"
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </button>
-                <button 
+                <button
                     disabled={activeIndex === items.length - 1}
-                    onClick={() => { setActiveIndex(p => Math.min(items.length - 1, p + 1)); }}
+                    onClick={() => {
+ setDirection(1); setActiveIndex(p => Math.min(items.length - 1, p + 1)); 
+}}
                     className="w-12 h-12 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl pointer-events-auto"
                 >
                     <ArrowRight className="w-5 h-5" />
@@ -151,16 +192,16 @@ export function DialCarouselLayout<T>({
             {/* Positioned exactly on the right edge (right-0 translate-x-[50%]) to form a perfect half-circle cutoff */}
             <div className="fixed right-0 translate-x-[50%] top-1/2 -translate-y-1/2 w-[900px] h-[900px] pointer-events-none z-10 transition-all duration-500">
                 <div className="absolute inset-0 pointer-events-none z-30">
-                    <motion.div 
+                    <motion.div
                         className="w-full h-full rounded-full border-[1px] border-slate-300/30 dark:border-white/10 relative flex items-center justify-center shadow-[0_0_100px_rgba(0,0,0,0.05)]"
                         animate={{ rotate: CIRCLE_ROTATION }}
                         transition={{ type: "spring", stiffness: 50, damping: 20, mass: 1 }}
                     >
-                        
+
                         {/* Rotary Track Rings (Multiple for thickness) */}
                         <div className="absolute inset-[40px] rounded-full border-[30px] border-white/60 dark:border-slate-800/60 backdrop-blur-xl shadow-inner pointer-events-none"></div>
                         <div className="absolute inset-[80px] rounded-full border-[1px] border-slate-300/50 dark:border-slate-700/50 pointer-events-none"></div>
-                        
+
                         {/* Inner Core */}
                         <div className="absolute inset-[130px] rounded-full bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-3xl border border-white/50 dark:border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.1)] pointer-events-none flex items-center justify-center">
                             {/* Decorative Center Hub */}
@@ -176,10 +217,12 @@ export function DialCarouselLayout<T>({
                             const distance = Math.abs(idx - activeIndex);
 
                             // Hide items that wrap around too far to the right
-                            if (distance > 5) return null;
+                            if (distance > 5) {
+return null;
+}
 
                             return (
-                                <div 
+                                <div
                                     key={`dial-item-${idx}`}
                                     className="absolute w-[100px] h-[100px] top-1/2 left-1/2 -ml-[50px] -mt-[50px] z-50 pointer-events-auto"
                                     style={{
@@ -189,17 +232,20 @@ export function DialCarouselLayout<T>({
                                     }}
                                 >
 
-                                    <motion.div 
+                                    <motion.div
                                         animate={{ rotate: -CIRCLE_ROTATION }}
                                         transition={{ type: "spring", stiffness: 50, damping: 20, mass: 1 }}
                                         className="w-full h-full flex items-center justify-center cursor-pointer group"
-                                        onClick={() => setActiveIndex(idx)}
+                                        onClick={() => {
+                                            setDirection(idx > activeIndex ? 1 : -1);
+                                            setActiveIndex(idx);
+                                        }}
                                     >
                                         <div className="relative flex items-center justify-center">
                                             {/* Text Label aligned OUTSIDE the circle (Left side of the icon) */}
                                             {/* We use right-[100%] to push it leftwards because the icons are on the left edge of the ring */}
-                                            <motion.div 
-                                                animate={{ 
+                                            <motion.div
+                                                animate={{
                                                     opacity: isActive ? 1 : Math.max(0, 0.4 - (distance * 0.1)),
                                                     scale: isActive ? 1 : 0.9,
                                                     x: isActive ? -12 : 0,
@@ -233,7 +279,7 @@ export function DialCarouselLayout<T>({
                     </motion.div>
                 </div>
             </div>
-            
+
         </div>
     );
 }
