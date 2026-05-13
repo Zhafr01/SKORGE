@@ -31,7 +31,8 @@ export default function AuthCallback() {
             .then((res) => {
                 const user = res.data?.data ?? res.data;
                 localStorage.setItem('auth_user', JSON.stringify(user));
-                navigate('/dashboard');
+                // Full reload so AuthProvider re-initializes with the new token
+                window.location.href = '/dashboard';
             })
             .catch(() => {
                 setError('Could not fetch user data. Please try again.');
