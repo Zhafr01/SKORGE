@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\RecommendationController;
+use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\StatsController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VideoController;
@@ -34,6 +35,10 @@ use Illuminate\Support\Facades\Route;
 // Authentication Routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Google OAuth
+Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {

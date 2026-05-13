@@ -80,7 +80,7 @@ return null;
                 autoPlay
                 muted
                 playsInline
-                className="w-full h-full object-cover transform scale-105"
+                className="w-full h-full object-contain sm:object-cover bg-black transform sm:scale-105"
                 onEnded={handleVideoEnd}
                 onClick={handleVideoClick} 
                 onPlay={() => setPlayBlocked(false)}

@@ -16,6 +16,7 @@ import AdminJobRoles from './pages/admin/job-roles';
 import AdminSystem from './pages/admin/system';
 import Login from './pages/auth/login';
 import Register from './pages/auth/register';
+import AuthCallback from './pages/auth/callback';
 import CourseIndex from './pages/courses/index';
 import JobRoleIndex from './pages/job-roles/index';
 import JobRoleShow from './pages/job-roles/show';
@@ -44,6 +45,7 @@ createRoot(document.getElementById('root')!).render(
                             <Route path="/" element={<Welcome />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
+                            <Route path="/auth/callback" element={<AuthCallback />} />
                             <Route path="/about" element={<About />} />
                             <Route path="/job-roles" element={<JobRoleIndex />} />
                             <Route path="/job-roles/:id" element={<JobRoleShow />} />

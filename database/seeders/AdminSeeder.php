@@ -16,6 +16,7 @@ class AdminSeeder extends Seeder
                 'name' => 'SKORGE Admin',
                 'email' => 'admin@skorge.com',
                 'password' => Hash::make('password'),
+                'email_verified_at' => now(),
                 'role' => 'admin',
                 'xp_points' => 0,
             ]

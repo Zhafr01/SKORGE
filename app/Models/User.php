@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role', 'xp_points', 'level', 'current_streak', 'learning_hours', 'learning_seconds', 'last_active_at', 'pet_name', 'pet_accessories', 'avatar'])]
+#[Fillable(['name', 'email', 'password', 'role', 'xp_points', 'level', 'current_streak', 'learning_hours', 'learning_seconds', 'last_active_at', 'pet_name', 'pet_accessories', 'avatar', 'google_id', 'email_verified_at'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
